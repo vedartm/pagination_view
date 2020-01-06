@@ -2,7 +2,6 @@ name: pagination_view
 description: Flutter package to simplify pagination.
 version: 0.1.0
 author: excogitatr<venkatesh@cogitare.space>
-email: venkatesh@cogitare.space
 homepage: https://github.com/excogitatr/pagination_view
 
 environment:
@@ -10,10 +9,6 @@ environment:
 
 dependencies:
   flutter:
-    sdk: flutter
-
-dev_dependencies:
-  flutter_test:
     sdk: flutter
 
 flutter:
