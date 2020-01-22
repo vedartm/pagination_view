@@ -1,6 +1,6 @@
 # PaginationView
 
-[![pub package](https://img.shields.io/badge/pub-0.1.0-blueviolet.svg)](https://pub.dev/packages/pagination_view)
+[![pub package](https://img.shields.io/badge/pub-0.3.0-blueviolet.svg)](https://pub.dev/packages/pagination_view)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/excogitatr/pagination_view/master/assets/pagination_view_screen.gif" height="500px">
@@ -9,10 +9,12 @@
 ## Installing
 
 In your pubspec.yaml
+
 ```yaml
 dependencies:
-  pagination_view: ^0.1.0
+  pagination_view: ^0.3.0
 ```
+
 ```dart
 import 'package:pagination_view/pagination_view.dart';
 ```
@@ -46,8 +48,8 @@ This project is a starting point for a Dart
 a library module containing code that can be shared easily across
 multiple Flutter or Dart projects.
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
 ## License

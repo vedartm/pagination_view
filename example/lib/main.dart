@@ -38,6 +38,12 @@ class HomePage extends StatelessWidget {
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),
         ),
+        initialData: <User>[
+          User(faker.person.name(), faker.internet.email()),
+          User(faker.person.name(), faker.internet.email()),
+          User(faker.person.name(), faker.internet.email()),
+          User(faker.person.name(), faker.internet.email()),
+        ],
         onEmpty: Center(
           child: Text('Sorry! This is empty'),
         ),
@@ -49,7 +55,7 @@ class HomePage extends StatelessWidget {
     final Faker faker = Faker();
     final List<User> nextUsersList = List.generate(
         10, (int index) => User(faker.person.name(), faker.internet.email()));
-    await Future<List<User>>.delayed(Duration(seconds: 3));
+    await Future<List<User>>.delayed(Duration(seconds: 2));
     return nextUsersList;
   }
 }
