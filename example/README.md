@@ -37,6 +37,12 @@ class HomePage extends StatelessWidget {
             onPressed: () => null,
           ),
         ),
+        initialData: <User>[
+          User(faker.person.name(), faker.internet.email()),
+          User(faker.person.name(), faker.internet.email()),
+          User(faker.person.name(), faker.internet.email()),
+          User(faker.person.name(), faker.internet.email()),
+        ],
         pageFetch: pageFetch,
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),

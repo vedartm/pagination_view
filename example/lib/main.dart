@@ -26,21 +26,21 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('PaginationView Example')),
       body: PaginationView<User>(
-        itemBuilder: (BuildContext context, User user) => ListTile(
-          title: Text(user.name),
-          subtitle: Text(user.email),
-          leading: IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () => null,
-          ),
-        ),
+        itemBuilder: (BuildContext context, User user) {
+          return ListTile(
+            title: Text(user.name),
+            subtitle: Text(user.email),
+            leading: IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () => null,
+            ),
+          );
+        },
         pageFetch: pageFetch,
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),
         ),
         initialData: <User>[
-          User(faker.person.name(), faker.internet.email()),
-          User(faker.person.name(), faker.internet.email()),
           User(faker.person.name(), faker.internet.email()),
           User(faker.person.name(), faker.internet.email()),
         ],

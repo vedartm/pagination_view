@@ -15,6 +15,9 @@ class PaginationView<T> extends StatefulWidget {
     @required this.onError,
     this.initialData = const [],
     this.onLoading = const Center(child: CircularProgressIndicator()),
+    this.shrinkWrap = false,
+    this.scrollDirection = Axis.vertical,
+    this.physics,
     this.onPageLoading = const Center(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -38,6 +41,9 @@ class PaginationView<T> extends StatefulWidget {
   final EdgeInsets padding;
   final Widget seperatorWidget;
   final List<T> initialData;
+  final bool shrinkWrap;
+  final Axis scrollDirection;
+  final ScrollPhysics physics;
 
   @override
   _PaginationViewState<T> createState() => _PaginationViewState<T>();
@@ -79,6 +85,9 @@ class _PaginationViewState<T> extends State<PaginationView<T>>
           return widget.onError(_error);
         }
         return ListView.separated(
+          shrinkWrap: widget.shrinkWrap,
+          scrollDirection: widget.scrollDirection,
+          physics: widget.physics,
           padding: widget.padding,
           itemCount: _itemList.length,
           separatorBuilder: (BuildContext context, int index) =>
