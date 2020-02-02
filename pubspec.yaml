@@ -1,6 +1,6 @@
 name: pagination_view
 description: Flutter package to simplify pagination of list of items from the internet.
-version: 0.3.0
+version: 0.5.0
 homepage: https://github.com/excogitatr/pagination_view
 
 environment:

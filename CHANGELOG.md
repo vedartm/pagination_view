@@ -13,3 +13,7 @@
 ## [0.4.0] - 2020-01-27
 
 - Added necessary ListView attributes like `shrinkWrap`, `physics`, etc.,
+
+## [0.5.0] - 2020-02-03
+
+- Fixed `NoSuchMethodError`

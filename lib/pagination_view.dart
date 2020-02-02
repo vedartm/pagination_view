@@ -114,6 +114,7 @@ class _PaginationViewState<T> extends State<PaginationView<T>>
       if (_itemList.contains(null)) {
         _itemList.remove(null);
       }
+      list = list ?? <T>[];
       if (list.isEmpty) {
         if (offset == 0) {
           _streamController.add(PageState.firstEmpty);
