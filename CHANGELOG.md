@@ -17,3 +17,7 @@
 ## [0.5.0] - 2020-02-03
 
 - Fixed `NoSuchMethodError`
+
+## [0.6.0] - 2020-03-08
+
+- Added `reverse` attribute
