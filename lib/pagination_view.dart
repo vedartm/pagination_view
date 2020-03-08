@@ -16,9 +16,9 @@ class PaginationView<T> extends StatefulWidget {
     this.initialData = const [],
     this.onLoading = const Center(child: CircularProgressIndicator()),
     this.shrinkWrap = false,
+    this.reverse = false,
     this.scrollDirection = Axis.vertical,
     this.physics,
-    this.reverse,
     this.onPageLoading = const Center(
       child: Padding(
         padding: EdgeInsets.all(16.0),
