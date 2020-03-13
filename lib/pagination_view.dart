@@ -18,7 +18,6 @@ class PaginationView<T> extends StatefulWidget {
     this.shrinkWrap = false,
     this.reverse = false,
     this.scrollDirection = Axis.vertical,
-    this.physics,
     this.onPageLoading = const Center(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -31,6 +30,8 @@ class PaginationView<T> extends StatefulWidget {
     ),
     this.padding = const EdgeInsets.all(0),
     this.seperatorWidget = const SizedBox(height: 0, width: 0),
+    this.physics,
+    this.onRefresh,
   }) : super(key: key);
 
   final Widget Function(BuildContext, T) itemBuilder;
@@ -42,6 +43,7 @@ class PaginationView<T> extends StatefulWidget {
   final EdgeInsets padding;
   final Widget seperatorWidget;
   final List<T> initialData;
+  final Future<void> Function() onRefresh;
   final bool shrinkWrap;
   final bool reverse;
   final Axis scrollDirection;
@@ -60,8 +62,7 @@ class _PaginationViewState<T> extends State<PaginationView<T>>
 
   @override
   void initState() {
-    _itemList.addAll(widget.initialData);
-    if (widget.initialData.length > 0) _itemList.add(null);
+    initList();
     super.initState();
   }
 
@@ -70,8 +71,8 @@ class _PaginationViewState<T> extends State<PaginationView<T>>
     super.build(context);
     return StreamBuilder<PageState>(
       stream: _streamController.stream,
-      initialData:
-          (_itemList.length == 0) ? PageState.firstLoad : PageState.pageLoad,
+      // initialData:
+      //     (_itemList.length == 0) ? PageState.firstLoad : PageState.pageLoad,
       builder: (BuildContext context, AsyncSnapshot<PageState> snapshot) {
         if (!snapshot.hasData) {
           return widget.onLoading;
@@ -86,61 +87,84 @@ class _PaginationViewState<T> extends State<PaginationView<T>>
         if (snapshot.data == PageState.firstError) {
           return widget.onError(_error);
         }
-        return ListView.separated(
-          reverse: widget.reverse,
-          shrinkWrap: widget.shrinkWrap,
-          scrollDirection: widget.scrollDirection,
-          physics: widget.physics,
-          padding: widget.padding,
-          itemCount: _itemList.length,
-          separatorBuilder: (BuildContext context, int index) =>
-              widget.seperatorWidget,
-          itemBuilder: (BuildContext context, int index) {
-            if (_itemList[index] == null &&
-                snapshot.data == PageState.pageLoad) {
-              fetchPageData(offset: index);
-              return widget.onPageLoading;
-            }
-            if (_itemList[index] == null &&
-                snapshot.data == PageState.pageError) {
-              return widget.onError(_error);
-            }
-            return widget.itemBuilder(context, _itemList[index]);
-          },
-        );
+        if (widget.onRefresh != null) {
+          return RefreshIndicator(
+            onRefresh: () {
+              initList();
+              return widget.onRefresh();
+            },
+            child: getListView(snapshot.data),
+          );
+        } else {
+          return getListView(snapshot.data);
+        }
       },
     );
   }
 
-  void fetchPageData({int offset = 0}) {
-    widget.pageFetch(offset - widget.initialData.length).then((List<T> list) {
-      if (_itemList.contains(null)) {
-        _itemList.remove(null);
-      }
-      list = list ?? <T>[];
-      if (list.isEmpty) {
-        if (offset == 0) {
-          _streamController.add(PageState.firstEmpty);
-        } else {
-          _streamController.add(PageState.pageEmpty);
+  Widget getListView(PageState state) {
+    return ListView.separated(
+      reverse: widget.reverse,
+      shrinkWrap: widget.shrinkWrap,
+      scrollDirection: widget.scrollDirection,
+      physics: widget.physics,
+      padding: widget.padding,
+      itemCount: _itemList.length,
+      separatorBuilder: (BuildContext context, int index) =>
+          widget.seperatorWidget,
+      itemBuilder: (BuildContext context, int index) {
+        if (_itemList[index] == null && state == PageState.pageLoad) {
+          fetchPageData(offset: index);
+          return widget.onPageLoading;
         }
-        return;
-      }
+        if (_itemList[index] == null && state == PageState.pageError) {
+          return widget.onError(_error);
+        }
+        return widget.itemBuilder(context, _itemList[index]);
+      },
+    );
+  }
 
-      _itemList.addAll(list);
-      _itemList.add(null);
-      _streamController.add(PageState.pageLoad);
-    }, onError: (dynamic _error) {
-      this._error = _error;
-      if (offset == 0) {
-        _streamController.add(PageState.firstError);
-      } else {
-        if (!_itemList.contains(null)) {
-          _itemList.add(null);
+  void initList() {
+    _itemList.clear();
+    _itemList.addAll(widget.initialData);
+    if (widget.initialData.length > 0) _itemList.add(null);
+    _streamController.add(
+        (_itemList.length == 0) ? PageState.firstLoad : PageState.pageLoad);
+  }
+
+  void fetchPageData({int offset = 0}) {
+    widget.pageFetch(offset - widget.initialData.length).then(
+      (List<T> list) {
+        if (_itemList.contains(null)) {
+          _itemList.remove(null);
         }
-        _streamController.add(PageState.pageError);
-      }
-    });
+        list = list ?? <T>[];
+        if (list.isEmpty) {
+          if (offset == 0) {
+            _streamController.add(PageState.firstEmpty);
+          } else {
+            _streamController.add(PageState.pageEmpty);
+          }
+          return;
+        }
+
+        _itemList.addAll(list);
+        _itemList.add(null);
+        _streamController.add(PageState.pageLoad);
+      },
+      onError: (dynamic _error) {
+        this._error = _error;
+        if (offset == 0) {
+          _streamController.add(PageState.firstError);
+        } else {
+          if (!_itemList.contains(null)) {
+            _itemList.add(null);
+          }
+          _streamController.add(PageState.pageError);
+        }
+      },
+    );
   }
 
   @override
