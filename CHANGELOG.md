@@ -21,3 +21,7 @@
 ## [0.6.0] - 2020-03-08
 
 - Added `reverse` attribute
+
+## [0.7.0] - 2020-03-13
+
+- Added Refresh Indicator which can be enabled by `onRefresh` property
