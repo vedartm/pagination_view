@@ -1,6 +1,8 @@
 # PaginationView
 
-[![pub package](https://img.shields.io/badge/pub-0.7.0-blueviolet.svg)](https://pub.dev/packages/pagination_view)
+[![pub package](https://img.shields.io/pub/v/pagination_view.svg)](https://pub.dev/packages/pagination_view)
+[![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
+[![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/excogitatr/pagination_view/master/assets/pagination_view_screen.gif" height="500px">
@@ -12,7 +14,7 @@ In your pubspec.yaml
 
 ```yaml
 dependencies:
-  pagination_view: ^0.7.0
+  pagination_view: ^1.0.0
 ```
 
 ```dart
@@ -22,23 +24,33 @@ import 'package:pagination_view/pagination_view.dart';
 ## Basic Usage
 
 ```dart
-    PaginationView<User>(
-      itemBuilder: (BuildContext context, User user) => ListTile(
-        title: Text(user.name),
-        subtitle: Text(user.email),
-        leading: IconButton(
-          icon: Icon(Icons.person),
-          onPressed: () => null,
+      PaginationView<User>(
+        preloadedItems: <User>[
+          User(faker.person.name(), faker.internet.email()),
+          User(faker.person.name(), faker.internet.email()),
+        ],
+        itemBuilder: (BuildContext context, User user) => ListTile(
+          title: Text(user.name),
+          subtitle: Text(user.email),
+          leading: IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () => null,
+          ),
+        ),
+        pageFetch: pageFetch,
+        onError: (dynamic error) => Center(
+          child: Text('Some error occured'),
+        ),
+        onEmpty: Center(
+          child: Text('Sorry! This is empty'),
+        ),
+        bottomLoader: Center(
+          child: CircularProgressIndicator(),
+        ),
+        initialLoader: Center(
+          child: CircularProgressIndicator(),
         ),
       ),
-      pageFetch: pageFetch,
-      onError: (dynamic error) => Center(
-        child: Text('Some error occured'),
-      ),
-      onEmpty: Center(
-        child: Text('Sorry! This is empty'),
-      ),
-    );
 ```
 
 ## Getting Started
