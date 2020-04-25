@@ -1,7 +1,7 @@
 include: package:effective_dart/analysis_options.yaml
+
 analyzer:
   errors:
     missing_return: error
     avoid_print: error
     public_member_api_docs: ignore
-#     one_member_abstracts: ignore
