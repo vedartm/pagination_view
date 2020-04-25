@@ -1,3 +1,7 @@
+## 1.0.0+1
+
+- Fixed bottomLoader visible if list is short ([#3](https://github.com/excogitatr/pagination_view/issues/3))
+
 ## 1.0.0 (Breaking changes)
 
 - Moved to `bloc` to handle state changes
