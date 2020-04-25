@@ -64,7 +64,7 @@ class _PaginationViewState<T> extends State<PaginationView<T>> {
           if (loadedState.items.isEmpty) {
             return widget.onEmpty;
           }
-          return _buildListView(loadedState);
+          return _buildNewListView(loadedState);
         }
       },
     );
@@ -73,45 +73,29 @@ class _PaginationViewState<T> extends State<PaginationView<T>> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
     _bloc = PaginationBloc<T>(widget.preloadedItems)
       ..add(PageFetch(callback: widget.pageFetch));
   }
 
-  Widget _buildListView(PaginationLoaded<T> loadedState) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: _handleScrollNotification,
-      child: ListView.separated(
-        controller: _scrollController,
-        reverse: widget.reverse,
-        shrinkWrap: widget.shrinkWrap,
-        scrollDirection: widget.scrollDirection,
-        physics: widget.physics,
-        padding: widget.padding,
-        separatorBuilder: (context, index) => widget.separator,
-        itemCount: loadedState.hasReachedEnd
-            ? loadedState.items.length
-            : loadedState.items.length + 1,
-        itemBuilder: (context, index) => index >= loadedState.items.length
-            ? widget.bottomLoader
-            : widget.itemBuilder(context, loadedState.items[index]),
-      ),
+  Widget _buildNewListView(PaginationLoaded<T> loadedState) {
+    return ListView.separated(
+      controller: _scrollController,
+      reverse: widget.reverse,
+      shrinkWrap: widget.shrinkWrap,
+      scrollDirection: widget.scrollDirection,
+      physics: widget.physics,
+      padding: widget.padding,
+      separatorBuilder: (context, index) => widget.separator,
+      itemCount: loadedState.hasReachedEnd
+          ? loadedState.items.length
+          : loadedState.items.length + 1,
+      itemBuilder: (context, index) {
+        if (index >= loadedState.items.length) {
+          _bloc.add(PageFetch(callback: widget.pageFetch));
+          return widget.bottomLoader;
+        }
+        return widget.itemBuilder(context, loadedState.items[index]);
+      },
     );
-  }
-
-  void _onScroll() {
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
-    final _scrollThreshold = 200;
-    if (maxScroll - currentScroll <= _scrollThreshold) {}
-  }
-
-  bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollEndNotification &&
-        _scrollController.position.extentAfter == 0) {
-      _bloc.add(PageFetch(callback: widget.pageFetch));
-    }
-
-    return false;
   }
 }

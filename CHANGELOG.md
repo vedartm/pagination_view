@@ -1,32 +1,32 @@
-## [1.0.0] - 2020-04-24 (Breaking changes)
+## 1.0.0 (Breaking changes)
 
 - Moved to `bloc` to handle state changes
 - Check example for change in parameters
 
-## [0.7.0] - 2020-03-13
+## 0.7.0
 
 - Added Refresh Indicator which can be enabled by `onRefresh` property
 
-## [0.6.0] - 2020-03-08
+## 0.6.0
 
 - Added `reverse` attribute
 
-## [0.5.0] - 2020-02-03
+## 0.5.0
 
 - Fixed `NoSuchMethodError`
 
-## [0.4.0] - 2020-01-27
+## 0.4.0
 
 - Added necessary ListView attributes like `shrinkWrap`, `physics`, etc.,
 
-## [0.3.0] - 2020-01-22
+## 0.3.0
 
 - Now you can preload list view with `initialData`
 
-## [0.2.0] - 2020-01-06
+## 0.2.0
 
 - Change in Example and Description
 
-## [0.1.0] - 2020-01-06
+## 0.1.0
 
 - Initial release

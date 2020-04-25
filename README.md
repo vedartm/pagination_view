@@ -1,5 +1,6 @@
 # PaginationView
 
+[![Actions Status](https://github.com/excogitatr/pagination_view/workflows/build/badge.svg)](https://github.com/excogitatr/pagination_view/actions?query=workflow%3Abuild)
 [![pub package](https://img.shields.io/pub/v/pagination_view.svg)](https://pub.dev/packages/pagination_view)
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
@@ -14,7 +15,7 @@ In your pubspec.yaml
 
 ```yaml
 dependencies:
-  pagination_view: ^1.0.0
+  pagination_view: ^1.0.0+1
 ```
 
 ```dart
@@ -63,7 +64,3 @@ multiple Flutter or Dart projects.
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
