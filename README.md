@@ -15,7 +15,7 @@ In your pubspec.yaml
 
 ```yaml
 dependencies:
-  pagination_view: ^1.0.0+1
+  pagination_view: ^1.0.1
 ```
 
 ```dart
@@ -30,7 +30,7 @@ import 'package:pagination_view/pagination_view.dart';
           User(faker.person.name(), faker.internet.email()),
           User(faker.person.name(), faker.internet.email()),
         ],
-        itemBuilder: (BuildContext context, User user) => ListTile(
+        itemBuilder: (BuildContext context, User user, int index) => ListTile(
           title: Text(user.name),
           subtitle: Text(user.email),
           leading: IconButton(

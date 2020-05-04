@@ -1,3 +1,10 @@
+## 1.0.1
+
+- Added Support for GridView type ([#7](https://github.com/excogitatr/pagination_view/issues/7)) [@Saifallak](https://github.com/Saifallak)
+
+### Breaking Change:
+- the item builder has a new parameter (index).
+
 ## 1.0.0+1
 
 - Fixed bottomLoader visible if list is short ([#3](https://github.com/excogitatr/pagination_view/issues/3))
