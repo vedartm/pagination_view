@@ -38,6 +38,7 @@ import 'package:pagination_view/pagination_view.dart';
             onPressed: () => null,
           ),
         ),
+        paginationViewType: PaginationViewType.listView // optional
         pageFetch: pageFetch,
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),
@@ -45,10 +46,10 @@ import 'package:pagination_view/pagination_view.dart';
         onEmpty: Center(
           child: Text('Sorry! This is empty'),
         ),
-        bottomLoader: Center(
+        bottomLoader: Center( // optional
           child: CircularProgressIndicator(),
         ),
-        initialLoader: Center(
+        initialLoader: Center( // optional
           child: CircularProgressIndicator(),
         ),
       ),
