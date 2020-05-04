@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "Saifallak",
+      "name": "Saif Allah Khaled",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/6053156?v=4",
+      "profile": "http://Facebook.com/Saifallak",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "pagination_view",
+  "projectOwner": "excogitatr",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
