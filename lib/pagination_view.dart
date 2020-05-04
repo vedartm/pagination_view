@@ -48,7 +48,7 @@ class PaginationView<T> extends StatefulWidget {
   @override
   _PaginationViewState<T> createState() => _PaginationViewState<T>();
 
-  final Widget Function(BuildContext, T) itemBuilder;
+  final Widget Function(BuildContext, T, int) itemBuilder;
 
   final Widget Function(dynamic) onError;
 }
@@ -104,7 +104,7 @@ class _PaginationViewState<T> extends State<PaginationView<T>> {
           _bloc.add(PageFetch(callback: widget.pageFetch));
           return widget.bottomLoader;
         }
-        return widget.itemBuilder(context, loadedState.items[index]);
+        return widget.itemBuilder(context, loadedState.items[index], index);
       },
     );
   }
@@ -126,7 +126,7 @@ class _PaginationViewState<T> extends State<PaginationView<T>> {
           _bloc.add(PageFetch(callback: widget.pageFetch));
           return widget.bottomLoader;
         }
-        return widget.itemBuilder(context, loadedState.items[index]);
+        return widget.itemBuilder(context, loadedState.items[index],index);
       },
     );
   }
