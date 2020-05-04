@@ -1,3 +1,7 @@
+## 1.0.1
+
+- Added Support for GridView type ([#4](https://github.com/excogitatr/pagination_view/issues/4))
+
 ## 1.0.0+1
 
 - Fixed bottomLoader visible if list is short ([#3](https://github.com/excogitatr/pagination_view/issues/3))

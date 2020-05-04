@@ -8,6 +8,8 @@ import 'widgets/initial_loader.dart';
 
 typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
 
+enum PaginationViewType { listView, gridView }
+
 class PaginationView<T> extends StatefulWidget {
   const PaginationView({
     Key key,
@@ -16,9 +18,12 @@ class PaginationView<T> extends StatefulWidget {
     @required this.onEmpty,
     @required this.onError,
     this.separator = const EmptySeparator(),
+    this.gridDelegate =
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     this.preloadedItems = const [],
     this.initialLoader = const InitialLoader(),
     this.bottomLoader = const BottomLoader(),
+    this.paginationViewType = PaginationViewType.listView,
     this.shrinkWrap = false,
     this.reverse = false,
     this.scrollDirection = Axis.vertical,
@@ -36,6 +41,8 @@ class PaginationView<T> extends StatefulWidget {
   final bool reverse;
   final Axis scrollDirection;
   final Widget separator;
+  final SliverGridDelegate gridDelegate;
+  final PaginationViewType paginationViewType;
   final bool shrinkWrap;
 
   @override
@@ -64,6 +71,9 @@ class _PaginationViewState<T> extends State<PaginationView<T>> {
           if (loadedState.items.isEmpty) {
             return widget.onEmpty;
           }
+          if (widget.paginationViewType == PaginationViewType.gridView) {
+            return _buildNewGridView(loadedState);
+          }
           return _buildNewListView(loadedState);
         }
       },
@@ -86,6 +96,28 @@ class _PaginationViewState<T> extends State<PaginationView<T>> {
       physics: widget.physics,
       padding: widget.padding,
       separatorBuilder: (context, index) => widget.separator,
+      itemCount: loadedState.hasReachedEnd
+          ? loadedState.items.length
+          : loadedState.items.length + 1,
+      itemBuilder: (context, index) {
+        if (index >= loadedState.items.length) {
+          _bloc.add(PageFetch(callback: widget.pageFetch));
+          return widget.bottomLoader;
+        }
+        return widget.itemBuilder(context, loadedState.items[index]);
+      },
+    );
+  }
+
+  Widget _buildNewGridView(PaginationLoaded<T> loadedState) {
+    return GridView.builder(
+      gridDelegate: widget.gridDelegate,
+      controller: _scrollController,
+      reverse: widget.reverse,
+      shrinkWrap: widget.shrinkWrap,
+      scrollDirection: widget.scrollDirection,
+      physics: widget.physics,
+      padding: widget.padding,
       itemCount: loadedState.hasReachedEnd
           ? loadedState.items.length
           : loadedState.items.length + 1,

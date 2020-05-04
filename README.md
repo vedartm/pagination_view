@@ -15,7 +15,7 @@ In your pubspec.yaml
 
 ```yaml
 dependencies:
-  pagination_view: ^1.0.0+1
+  pagination_view: ^1.0.1
 ```
 
 ```dart
