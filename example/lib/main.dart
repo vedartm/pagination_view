@@ -24,25 +24,63 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int page = -1;
+  int page;
+  PaginationViewType paginationViewType;
+
+  @override
+  void initState() {
+    page = -1;
+    paginationViewType = PaginationViewType.listView;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('PaginationView Example')),
+      appBar: AppBar(
+        title: Text('PaginationView Example'),
+        actions: <Widget>[
+          (paginationViewType == PaginationViewType.listView)
+              ? IconButton(
+                  icon: Icon(Icons.grid_on),
+                  onPressed: () => setState(
+                      () => paginationViewType = PaginationViewType.gridView),
+                )
+              : IconButton(
+                  icon: Icon(Icons.list),
+                  onPressed: () => setState(
+                      () => paginationViewType = PaginationViewType.listView),
+                ),
+        ],
+      ),
       body: PaginationView<User>(
         preloadedItems: <User>[
           User(faker.person.name(), faker.internet.email()),
           User(faker.person.name(), faker.internet.email()),
         ],
-        itemBuilder: (BuildContext context, User user) => ListTile(
-          title: Text(user.name),
-          subtitle: Text(user.email),
-          leading: IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () => null,
-          ),
-        ),
+        paginationViewType: paginationViewType,
+        itemBuilder: (BuildContext context, User user, int index) =>
+            (paginationViewType == PaginationViewType.listView)
+                ? ListTile(
+                    title: Text(user.name),
+                    subtitle: Text(user.email),
+                    leading: CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
+                  )
+                : GridTile(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(child: Icon(Icons.person)),
+                        const SizedBox(height: 8),
+                        Text(user.name),
+                        const SizedBox(height: 8),
+                        Text(user.email),
+                      ],
+                    ),
+                  ),
         pageFetch: pageFetch,
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),
