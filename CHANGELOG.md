@@ -1,6 +1,6 @@
 ## 1.0.1
 
-- Added Support for GridView type ([#4](https://github.com/excogitatr/pagination_view/issues/4))
+- Added Support for GridView type ([#7](https://github.com/excogitatr/pagination_view/issues/7)) [@Saifallak](https://github.com/Saifallak)
 
 ## 1.0.0+1
 
