@@ -21,7 +21,7 @@ class PaginationView<T> extends StatefulWidget {
     this.pageRefresh,
     this.separator = const EmptySeparator(),
     this.gridDelegate =
-    const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     this.preloadedItems = const [],
     this.initialLoader = const InitialLoader(),
     this.bottomLoader = const BottomLoader(),
@@ -129,12 +129,15 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           _bloc.add(PageFetch(callback: widget.pageFetch));
           return widget.bottomLoader;
         }
-        return widget.itemBuilder(context, loadedState.items[index],index);
+        return widget.itemBuilder(context, loadedState.items[index], index);
       },
     );
   }
 
   void refresh() {
+    if (widget.pageRefresh == null) {
+      throw Exception('pageRefresh parameter cannot be null');
+    }
     _bloc.add(PageRefreshed(callback: widget.pageRefresh));
   }
 }
