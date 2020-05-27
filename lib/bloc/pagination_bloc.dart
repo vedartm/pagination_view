@@ -51,13 +51,13 @@ class PaginationBloc<T> extends Bloc<PaginationEvent<T>, PaginationState<T>> {
       if (!_hasReachedEnd(currentState)) {
         try {
           if (currentState is PaginationInitial) {
-            yield PaginationInitial();
+            return;
           }
           if (currentState is PaginationLoaded<T>) {
-            final firstItems = await refreshEvent.callback(0);
+            final refreshedItems = await refreshEvent.callback(0);
             yield PaginationLoaded(
-              items: firstItems,
-              hasReachedEnd: firstItems.isEmpty,
+              items: refreshedItems,
+              hasReachedEnd: refreshedItems.isEmpty,
             );
             return;
           }
