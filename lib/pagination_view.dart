@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/pagination_bloc.dart';
+import 'bloc/pagination_bloc.dart';
 import 'widgets/bottom_loader.dart';
 import 'widgets/empty_separator.dart';
 import 'widgets/initial_loader.dart';
@@ -17,9 +18,10 @@ class PaginationView<T> extends StatefulWidget {
     @required this.pageFetch,
     @required this.onEmpty,
     @required this.onError,
+    this.pageRefresh,
     this.separator = const EmptySeparator(),
     this.gridDelegate =
-        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+    const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     this.preloadedItems = const [],
     this.initialLoader = const InitialLoader(),
     this.bottomLoader = const BottomLoader(),
@@ -36,6 +38,7 @@ class PaginationView<T> extends StatefulWidget {
   final Widget onEmpty;
   final EdgeInsets padding;
   final PaginationBuilder<T> pageFetch;
+  final PaginationBuilder<T> pageRefresh;
   final ScrollPhysics physics;
   final List<T> preloadedItems;
   final bool reverse;
@@ -46,14 +49,14 @@ class PaginationView<T> extends StatefulWidget {
   final bool shrinkWrap;
 
   @override
-  _PaginationViewState<T> createState() => _PaginationViewState<T>();
+  PaginationViewState<T> createState() => PaginationViewState<T>();
 
   final Widget Function(BuildContext, T, int) itemBuilder;
 
   final Widget Function(dynamic) onError;
 }
 
-class _PaginationViewState<T> extends State<PaginationView<T>> {
+class PaginationViewState<T> extends State<PaginationView<T>> {
   PaginationBloc<T> _bloc;
   final _scrollController = ScrollController();
 
@@ -129,5 +132,9 @@ class _PaginationViewState<T> extends State<PaginationView<T>> {
         return widget.itemBuilder(context, loadedState.items[index],index);
       },
     );
+  }
+
+  void refresh() {
+    _bloc.add(PageRefreshed(callback: widget.pageRefresh));
   }
 }
