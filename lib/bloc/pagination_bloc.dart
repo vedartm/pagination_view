@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 part 'pagination_event.dart';
 part 'pagination_state.dart';
@@ -59,7 +60,7 @@ class PaginationBloc<T> extends Bloc<PaginationEvent<T>, PaginationState<T>> {
               items: refreshedItems,
               hasReachedEnd: refreshedItems.isEmpty,
             );
-            return;
+            refreshEvent.scrollController.jumpTo(0);
           }
         } on Exception catch (error) {
           yield PaginationError(error: error);
