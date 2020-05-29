@@ -26,11 +26,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int page;
   PaginationViewType paginationViewType;
+  GlobalKey<PaginationViewState> key;
 
   @override
   void initState() {
     page = -1;
     paginationViewType = PaginationViewType.listView;
+    key = GlobalKey<PaginationViewState>();
     super.initState();
   }
 
@@ -51,9 +53,14 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => setState(
                       () => paginationViewType = PaginationViewType.listView),
                 ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () => key.currentState.refresh(),
+          ),
         ],
       ),
       body: PaginationView<User>(
+        key: key,
         preloadedItems: <User>[
           User(faker.person.name(), faker.internet.email()),
           User(faker.person.name(), faker.internet.email()),
@@ -82,6 +89,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
         pageFetch: pageFetch,
+        pageRefresh: pageRefresh,
+        pullToRefresh: true,
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),
         ),
@@ -112,5 +121,10 @@ class _HomePageState extends State<HomePage> {
     await Future<List<User>>.delayed(Duration(seconds: 1));
 
     return page == 7 ? [] : nextUsersList;
+  }
+
+  Future<List<User>> pageRefresh(int offset) async {
+    page = -1;
+    return pageFetch(offset);
   }
 }
