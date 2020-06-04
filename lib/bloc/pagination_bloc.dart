@@ -59,7 +59,9 @@ class PaginationBloc<T> extends Bloc<PaginationEvent<T>, PaginationState<T>> {
             items: refreshedItems,
             hasReachedEnd: refreshedItems.isEmpty,
           );
-          refreshEvent.scrollController.jumpTo(0);
+          if(refreshEvent.scrollController.hasClients) {
+            refreshEvent.scrollController.jumpTo(0);
+          }
         }
       } on Exception catch (error) {
         yield PaginationError(error: error);
