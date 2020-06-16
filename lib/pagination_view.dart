@@ -19,7 +19,6 @@ class PaginationView<T> extends StatefulWidget {
     @required this.onError,
     this.pageRefresh,
     this.pullToRefresh = false,
-    this.separator = const EmptySeparator(),
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     this.preloadedItems = const [],
@@ -31,6 +30,7 @@ class PaginationView<T> extends StatefulWidget {
     this.scrollDirection = Axis.vertical,
     this.padding = const EdgeInsets.all(0),
     this.physics,
+    this.separatorBuilder,
   }) : super(key: key);
 
   final Widget bottomLoader;
@@ -44,7 +44,6 @@ class PaginationView<T> extends StatefulWidget {
   final bool pullToRefresh;
   final bool reverse;
   final Axis scrollDirection;
-  final Widget separator;
   final SliverGridDelegate gridDelegate;
   final PaginationViewType paginationViewType;
   final bool shrinkWrap;
@@ -53,6 +52,7 @@ class PaginationView<T> extends StatefulWidget {
   PaginationViewState<T> createState() => PaginationViewState<T>();
 
   final Widget Function(BuildContext, T, int) itemBuilder;
+  final Widget Function(BuildContext, int) separatorBuilder;
 
   final Widget Function(dynamic) onError;
 }
@@ -111,7 +111,8 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       scrollDirection: widget.scrollDirection,
       physics: widget.physics,
       padding: widget.padding,
-      separatorBuilder: (context, index) => widget.separator,
+      separatorBuilder:
+          widget.separatorBuilder ?? ((_, __) => EmptySeparator()),
       itemCount: loadedState.hasReachedEnd
           ? loadedState.items.length
           : loadedState.items.length + 1,
