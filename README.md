@@ -1,6 +1,6 @@
 # PaginationView
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![Actions Status](https://github.com/excogitatr/pagination_view/workflows/build/badge.svg)](https://github.com/excogitatr/pagination_view/actions?query=workflow%3Abuild)
@@ -80,6 +80,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="http://Facebook.com/Saifallak"><img src="https://avatars3.githubusercontent.com/u/6053156?v=4" width="100px;" alt=""/><br /><sub><b>Saif Allah Khaled</b></sub></a><br /><a href="https://github.com/excogitatr/pagination_view/commits?author=Saifallak" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/jezsung"><img src="https://avatars2.githubusercontent.com/u/45475169?v=4" width="100px;" alt=""/><br /><sub><b>jezsung</b></sub></a><br /><a href="https://github.com/excogitatr/pagination_view/commits?author=jezsung" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/psredzinski"><img src="https://avatars0.githubusercontent.com/u/23390884?v=4" width="100px;" alt=""/><br /><sub><b>psredzinski</b></sub></a><br /><a href="https://github.com/excogitatr/pagination_view/commits?author=psredzinski" title="Code">💻</a></td>
   </tr>
 </table>
 
