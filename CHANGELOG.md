@@ -1,3 +1,7 @@
+## 1.0.3
+
+- Added Optional Var scroll Controller
+
 ## 1.0.1
 
 - Added Support for GridView type ([#7](https://github.com/excogitatr/pagination_view/issues/7)) [@Saifallak](https://github.com/Saifallak)

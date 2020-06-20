@@ -31,6 +31,7 @@ class PaginationView<T> extends StatefulWidget {
     this.padding = const EdgeInsets.all(0),
     this.physics,
     this.separatorBuilder,
+    this.scrollController,
   }) : super(key: key);
 
   final Widget bottomLoader;
@@ -47,6 +48,7 @@ class PaginationView<T> extends StatefulWidget {
   final SliverGridDelegate gridDelegate;
   final PaginationViewType paginationViewType;
   final bool shrinkWrap;
+  final ScrollController scrollController;
 
   @override
   PaginationViewState<T> createState() => PaginationViewState<T>();
@@ -59,7 +61,7 @@ class PaginationView<T> extends StatefulWidget {
 
 class PaginationViewState<T> extends State<PaginationView<T>> {
   PaginationBloc<T> _bloc;
-  final _scrollController = ScrollController();
+  ScrollController _scrollController;
 
   @override
   Widget build(BuildContext context) {
@@ -99,6 +101,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   @override
   void initState() {
     super.initState();
+    _scrollController = widget.scrollController ?? ScrollController();
     _bloc = PaginationBloc<T>(widget.preloadedItems)
       ..add(PageFetch(callback: widget.pageFetch));
   }
