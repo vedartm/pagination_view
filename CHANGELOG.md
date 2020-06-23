@@ -1,12 +1,19 @@
 ## 1.0.3
 
-- Added Optional Var scroll Controller
+- Added `pullToRefresh` to enable swipe to refresh to the pagination view
+- Added optional `scrollController` attribute
+- Added `pageRefresh` to use custom onTap to refresh. (Check example)
+
+### Breaking Change:
+
+- Changed `seperator` to `separatorBuilder`
 
 ## 1.0.1
 
 - Added Support for GridView type ([#7](https://github.com/excogitatr/pagination_view/issues/7)) [@Saifallak](https://github.com/Saifallak)
 
 ### Breaking Change:
+
 - the item builder has a new parameter (index).
 
 ## 1.0.0+1
