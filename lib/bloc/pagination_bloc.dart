@@ -8,14 +8,12 @@ part 'pagination_event.dart';
 part 'pagination_state.dart';
 
 class PaginationBloc<T> extends Bloc<PaginationEvent<T>, PaginationState<T>> {
-  PaginationBloc(this.preloadedItems);
+  PaginationBloc(this.preloadedItems)
+      : super(preloadedItems.isNotEmpty
+            ? PaginationLoaded(items: preloadedItems, hasReachedEnd: false)
+            : PaginationInitial<T>());
 
   final List<T> preloadedItems;
-
-  @override
-  PaginationState<T> get initialState => preloadedItems.isNotEmpty
-      ? PaginationLoaded(items: preloadedItems, hasReachedEnd: false)
-      : PaginationInitial<T>();
 
   @override
   Stream<PaginationState<T>> mapEventToState(PaginationEvent<T> event) async* {
@@ -59,7 +57,7 @@ class PaginationBloc<T> extends Bloc<PaginationEvent<T>, PaginationState<T>> {
             items: refreshedItems,
             hasReachedEnd: refreshedItems.isEmpty,
           );
-          if(refreshEvent.scrollController.hasClients) {
+          if (refreshEvent.scrollController.hasClients) {
             refreshEvent.scrollController.jumpTo(0);
           }
         }

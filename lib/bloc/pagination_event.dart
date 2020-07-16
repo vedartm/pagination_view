@@ -28,10 +28,9 @@ class PageRefreshed<T> implements PaginationEvent<T> {
   final Future<List<T>> Function(int currentListSize) callback;
   final ScrollController scrollController;
 
-  PageRefreshed<T> copyWith({
-    Future<List<T>> Function(int currentListSize) callback,
-    ScrollController scrollController
-  }) {
+  PageRefreshed<T> copyWith(
+      {Future<List<T>> Function(int currentListSize) callback,
+      ScrollController scrollController}) {
     return PageRefreshed<T>(
       callback: callback ?? this.callback,
       scrollController: scrollController ?? this.scrollController,

@@ -1,3 +1,7 @@
+## 1.0.3+1
+
+- Updated `flutter_bloc` to v5.0.1
+
 ## 1.0.3
 
 - Added `pullToRefresh` to enable swipe to refresh to the pagination view
