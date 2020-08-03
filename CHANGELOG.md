@@ -1,3 +1,7 @@
+## 1.0.3+2
+
+- Updated `flutter_bloc` to v6.0.1
+
 ## 1.0.3+1
 
 - Updated `flutter_bloc` to v5.0.1

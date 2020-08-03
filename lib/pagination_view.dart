@@ -66,7 +66,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PaginationBloc<T>, PaginationState<T>>(
-      bloc: _bloc,
+      cubit: _bloc,
       builder: (context, state) {
         if (state is PaginationInitial<T>) {
           return widget.initialLoader;

@@ -13,19 +13,19 @@ void main() {
 
     blocTest(
       'when nothing is added emits [] ',
-      build: () async => PaginationBloc<int>([]),
+      build: () => PaginationBloc<int>([]),
       expect: [],
     );
 
     blocTest(
       'when preloaded data is added emits []',
-      build: () async => PaginationBloc<int>(tPreloadedList),
+      build: () => PaginationBloc<int>(tPreloadedList),
       expect: [],
     );
 
     blocTest(
       'when page fetched emits PaginationLoaded',
-      build: () async => PaginationBloc<int>(tPreloadedList),
+      build: () => PaginationBloc<int>(tPreloadedList),
       act: (bloc) => bloc.add(PageFetch<int>(callback: _pageFetch)),
       expect: [isA<PaginationLoaded>()],
     );
