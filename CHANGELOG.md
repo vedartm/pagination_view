@@ -1,3 +1,7 @@
+## 1.0.4
+
+- Added support for `header` and `footer` 
+
 ## 1.0.3+2
 
 - Updated `flutter_bloc` to v6.0.1

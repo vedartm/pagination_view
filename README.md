@@ -21,7 +21,7 @@ In your pubspec.yaml
 
 ```yaml
 dependencies:
-  pagination_view: ^1.0.3+2
+  pagination_view: ^1.0.4
 ```
 
 ```dart
@@ -44,6 +44,8 @@ import 'package:pagination_view/pagination_view.dart';
             onPressed: () => null,
           ),
         ),
+        header: Text('Header text'),
+        footer: Text('Footer text'),
         paginationViewType: PaginationViewType.listView // optional
         pageFetch: pageFetch,
         onError: (dynamic error) => Center(
