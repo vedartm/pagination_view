@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,28 +34,33 @@ class PaginationView<T> extends StatefulWidget {
     this.physics,
     this.separatorBuilder,
     this.scrollController,
+    this.header,
+    this.footer,
   }) : super(key: key);
 
   final Widget bottomLoader;
+  final Widget footer;
+  final SliverGridDelegate gridDelegate;
+  final Widget header;
   final Widget initialLoader;
   final Widget onEmpty;
   final EdgeInsets padding;
   final PaginationBuilder<T> pageFetch;
   final PaginationBuilder<T> pageRefresh;
+  final PaginationViewType paginationViewType;
   final ScrollPhysics physics;
   final List<T> preloadedItems;
   final bool pullToRefresh;
   final bool reverse;
-  final Axis scrollDirection;
-  final SliverGridDelegate gridDelegate;
-  final PaginationViewType paginationViewType;
-  final bool shrinkWrap;
   final ScrollController scrollController;
+  final Axis scrollDirection;
+  final bool shrinkWrap;
 
   @override
   PaginationViewState<T> createState() => PaginationViewState<T>();
 
   final Widget Function(BuildContext, T, int) itemBuilder;
+
   final Widget Function(BuildContext, int) separatorBuilder;
 
   final Widget Function(dynamic) onError;
@@ -62,6 +69,21 @@ class PaginationView<T> extends StatefulWidget {
 class PaginationViewState<T> extends State<PaginationView<T>> {
   PaginationCubit<T> _cubit;
   ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = widget.scrollController ?? ScrollController();
+    _cubit = PaginationCubit<T>(widget.preloadedItems, widget.pageFetch)
+      ..fetchPaginatedList();
+  }
+
+  void refresh() {
+    if (widget.pageRefresh == null) {
+      throw Exception('pageRefresh parameter cannot be null');
+    }
+    _cubit.refreshPaginatedList(_scrollController);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,84 +99,95 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           if (loadedState.items.isEmpty) {
             return widget.onEmpty;
           }
-          if (widget.paginationViewType == PaginationViewType.gridView) {
-            if (widget.pullToRefresh) {
-              return RefreshIndicator(
-                onRefresh: () async => refresh(),
-                child: _buildNewGridView(loadedState),
-              );
-            }
-            return _buildNewGridView(loadedState);
-          }
           if (widget.pullToRefresh) {
             return RefreshIndicator(
               onRefresh: () async => refresh(),
-              child: _buildNewListView(loadedState),
+              child: _buildCustomScrollView(loadedState),
             );
           }
-          return _buildNewListView(loadedState);
+          return _buildCustomScrollView(loadedState);
+          // if (widget.pullToRefresh) {
+          //   return RefreshIndicator(
+          //     onRefresh: () async => refresh(),
+          //     child: _buildNewListView(loadedState),
+          //   );
+          // }
+          // return _buildNewListView(loadedState);
         }
       },
     );
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = widget.scrollController ?? ScrollController();
-    _cubit = PaginationCubit<T>(widget.preloadedItems, widget.pageFetch)
-      ..fetchPaginatedList();
-  }
-
-  Widget _buildNewListView(PaginationLoaded<T> loadedState) {
-    return ListView.separated(
-      controller: _scrollController,
+  _buildCustomScrollView(PaginationLoaded<T> loadedState) {
+    return CustomScrollView(
       reverse: widget.reverse,
+      controller: _scrollController,
       shrinkWrap: widget.shrinkWrap,
       scrollDirection: widget.scrollDirection,
       physics: widget.physics,
-      padding: widget.padding,
-      separatorBuilder:
-          widget.separatorBuilder ?? ((_, __) => EmptySeparator()),
-      itemCount: loadedState.hasReachedEnd
-          ? loadedState.items.length
-          : loadedState.items.length + 1,
-      itemBuilder: (context, index) {
-        if (index >= loadedState.items.length) {
-          _cubit.fetchPaginatedList();
-          return widget.bottomLoader;
-        }
-        return widget.itemBuilder(context, loadedState.items[index], index);
-      },
+      slivers: [
+        if (widget.header != null) SliverToBoxAdapter(child: widget.header),
+        SliverPadding(
+          padding: widget.padding,
+          sliver: widget.paginationViewType == PaginationViewType.gridView
+              ? _buildSliverGrid(loadedState)
+              : _buildSliverList(loadedState),
+        ),
+        if (widget.footer != null) SliverToBoxAdapter(child: widget.footer),
+      ],
     );
   }
 
-  Widget _buildNewGridView(PaginationLoaded<T> loadedState) {
-    return GridView.builder(
+  _buildSliverGrid(PaginationLoaded<T> loadedState) {
+    return SliverGrid(
       gridDelegate: widget.gridDelegate,
-      controller: _scrollController,
-      reverse: widget.reverse,
-      shrinkWrap: widget.shrinkWrap,
-      scrollDirection: widget.scrollDirection,
-      physics: widget.physics,
-      padding: widget.padding,
-      itemCount: loadedState.hasReachedEnd
-          ? loadedState.items.length
-          : loadedState.items.length + 1,
-      itemBuilder: (context, index) {
-        if (index >= loadedState.items.length) {
-          _cubit.fetchPaginatedList();
-          return widget.bottomLoader;
-        }
-        return widget.itemBuilder(context, loadedState.items[index], index);
-      },
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          if (index >= loadedState.items.length) {
+            _cubit.fetchPaginatedList();
+            return widget.bottomLoader;
+          }
+          return widget.itemBuilder(context, loadedState.items[index], index);
+        },
+        childCount: loadedState.hasReachedEnd
+            ? loadedState.items.length
+            : loadedState.items.length + 1,
+      ),
     );
   }
 
-  void refresh() {
-    if (widget.pageRefresh == null) {
-      throw Exception('pageRefresh parameter cannot be null');
-    }
-    _cubit.refreshPaginatedList(_scrollController);
+  _buildSliverList(PaginationLoaded<T> loadedState) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          final itemIndex = index ~/ 2;
+          if (index.isEven) {
+            if (itemIndex >= loadedState.items.length) {
+              _cubit.fetchPaginatedList();
+              return widget.bottomLoader;
+            }
+            return widget.itemBuilder(
+                context, loadedState.items[itemIndex], itemIndex);
+          }
+          return widget.separatorBuilder != null
+              ? widget.separatorBuilder(context, itemIndex)
+              : const EmptySeparator();
+        },
+        semanticIndexCallback: (widget, localIndex) {
+          if (localIndex.isEven) {
+            return localIndex ~/ 2;
+          }
+          // ignore: avoid_returning_null
+          return null;
+        },
+        childCount: max(
+            0,
+            (loadedState.hasReachedEnd
+                        ? loadedState.items.length
+                        : loadedState.items.length + 1) *
+                    2 -
+                1),
+      ),
+    );
   }
 }

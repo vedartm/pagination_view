@@ -61,6 +61,8 @@ class _HomePageState extends State<HomePage> {
       ),
       body: PaginationView<User>(
         key: key,
+        header: Text('Header text'),
+        footer: Text('Footer text'),
         preloadedItems: <User>[
           User(faker.person.name(), faker.internet.email()),
           User(faker.person.name(), faker.internet.email()),
