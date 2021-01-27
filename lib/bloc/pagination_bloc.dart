@@ -4,71 +4,46 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-part 'pagination_event.dart';
 part 'pagination_state.dart';
 
-class PaginationBloc<T> extends Bloc<PaginationEvent<T>, PaginationState<T>> {
-  PaginationBloc(this.preloadedItems)
-      : super(preloadedItems.isNotEmpty
-            ? PaginationLoaded(items: preloadedItems, hasReachedEnd: false)
-            : PaginationInitial<T>());
+class PaginationCubit<T> extends Cubit<PaginationState<T>> {
+  PaginationCubit(this.preloadedItems, this.callback)
+      : super(PaginationInitial<T>());
 
   final List<T> preloadedItems;
 
-  @override
-  Stream<PaginationState<T>> mapEventToState(PaginationEvent<T> event) async* {
-    if (event is PageFetch) {
-      final currentState = state;
-      final fetchEvent = event as PageFetch;
-      if (!_hasReachedEnd(currentState)) {
-        try {
-          if (currentState is PaginationInitial) {
-            final firstItems = await fetchEvent.callback(0);
-            yield PaginationLoaded(
-              items: firstItems,
-              hasReachedEnd: firstItems.isEmpty,
-            );
-            return;
-          }
-          if (currentState is PaginationLoaded<T>) {
-            final newItems = await fetchEvent.callback(
-              _getAbsoluteOffset(currentState.items.length),
-            );
-            yield currentState.copyWith(
-              items: currentState.items + newItems,
-              hasReachedEnd: newItems.isEmpty,
-            );
-          }
-        } on Exception catch (error) {
-          yield PaginationError(error: error);
-        }
-      }
-    }
-    if (event is PageRefreshed) {
-      final currentState = state;
-      final refreshEvent = event as PageRefreshed;
-      try {
-        if (currentState is PaginationInitial) {
-          return;
-        }
-        if (currentState is PaginationLoaded<T>) {
-          final refreshedItems = await refreshEvent.callback(0);
-          yield PaginationLoaded(
-            items: refreshedItems,
-            hasReachedEnd: refreshedItems.isEmpty,
-          );
-          if (refreshEvent.scrollController.hasClients) {
-            refreshEvent.scrollController.jumpTo(0);
-          }
-        }
-      } on Exception catch (error) {
-        yield PaginationError(error: error);
-      }
+  final Future<List<T>> Function(int) callback;
+
+  void fetchPaginatedList() {
+    if (state is PaginationInitial) {
+      _fetchAndEmitPaginatedList(previousList: preloadedItems);
+    } else if (state is PaginationLoaded<T>) {
+      final loadedState = state as PaginationLoaded;
+      if (loadedState.hasReachedEnd) return;
+      _fetchAndEmitPaginatedList(previousList: loadedState.items);
     }
   }
 
-  bool _hasReachedEnd(PaginationState state) =>
-      state is PaginationLoaded && state.hasReachedEnd;
+  void refreshPaginatedList(ScrollController scrollController) {
+    _fetchAndEmitPaginatedList(previousList: preloadedItems);
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(0);
+    }
+  }
+
+  void _fetchAndEmitPaginatedList({List<T> previousList = const []}) async {
+    try {
+      final newList = await callback(
+        _getAbsoluteOffset(previousList.length),
+      );
+      emit(PaginationLoaded(
+        items: previousList + newList,
+        hasReachedEnd: newList.isEmpty,
+      ));
+    } on Exception catch (error) {
+      emit(PaginationError(error: error));
+    }
+  }
 
   int _getAbsoluteOffset(int offset) => offset - preloadedItems.length;
 }

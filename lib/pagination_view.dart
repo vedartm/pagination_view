@@ -60,13 +60,13 @@ class PaginationView<T> extends StatefulWidget {
 }
 
 class PaginationViewState<T> extends State<PaginationView<T>> {
-  PaginationBloc<T> _bloc;
+  PaginationCubit<T> _cubit;
   ScrollController _scrollController;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PaginationBloc<T>, PaginationState<T>>(
-      cubit: _bloc,
+    return BlocBuilder<PaginationCubit<T>, PaginationState<T>>(
+      cubit: _cubit,
       builder: (context, state) {
         if (state is PaginationInitial<T>) {
           return widget.initialLoader;
@@ -102,8 +102,8 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   void initState() {
     super.initState();
     _scrollController = widget.scrollController ?? ScrollController();
-    _bloc = PaginationBloc<T>(widget.preloadedItems)
-      ..add(PageFetch(callback: widget.pageFetch));
+    _cubit = PaginationCubit<T>(widget.preloadedItems, widget.pageFetch)
+      ..fetchPaginatedList();
   }
 
   Widget _buildNewListView(PaginationLoaded<T> loadedState) {
@@ -121,7 +121,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           : loadedState.items.length + 1,
       itemBuilder: (context, index) {
         if (index >= loadedState.items.length) {
-          _bloc.add(PageFetch(callback: widget.pageFetch));
+          _cubit.fetchPaginatedList();
           return widget.bottomLoader;
         }
         return widget.itemBuilder(context, loadedState.items[index], index);
@@ -143,7 +143,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           : loadedState.items.length + 1,
       itemBuilder: (context, index) {
         if (index >= loadedState.items.length) {
-          _bloc.add(PageFetch(callback: widget.pageFetch));
+          _cubit.fetchPaginatedList();
           return widget.bottomLoader;
         }
         return widget.itemBuilder(context, loadedState.items[index], index);
@@ -155,9 +155,6 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     if (widget.pageRefresh == null) {
       throw Exception('pageRefresh parameter cannot be null');
     }
-    _bloc.add(PageRefreshed(
-      callback: widget.pageRefresh,
-      scrollController: _scrollController,
-    ));
+    _cubit.refreshPaginatedList(_scrollController);
   }
 }
