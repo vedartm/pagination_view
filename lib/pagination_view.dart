@@ -13,7 +13,7 @@ typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
 enum PaginationViewType { listView, gridView }
 
 class PaginationView<T> extends StatefulWidget {
-  const PaginationView({
+  PaginationView({
     Key key,
     @required this.itemBuilder,
     @required this.pageFetch,
@@ -23,7 +23,7 @@ class PaginationView<T> extends StatefulWidget {
     this.pullToRefresh = false,
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-    this.preloadedItems = const [],
+    List<T> preloadedItems,
     this.initialLoader = const InitialLoader(),
     this.bottomLoader = const BottomLoader(),
     this.paginationViewType = PaginationViewType.listView,
@@ -36,7 +36,8 @@ class PaginationView<T> extends StatefulWidget {
     this.scrollController,
     this.header,
     this.footer,
-  }) : super(key: key);
+  })  : preloadedItems = preloadedItems ?? <T>[],
+        super(key: key);
 
   final Widget bottomLoader;
   final Widget footer;
