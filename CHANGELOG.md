@@ -1,3 +1,7 @@
+## 1.0.4+1
+
+- Fixes refresh issue and removes `pageRefersh`
+
 ## 1.0.4
 
 - Added support for `header` and `footer` 

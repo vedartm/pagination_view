@@ -19,7 +19,6 @@ class PaginationView<T> extends StatefulWidget {
     @required this.pageFetch,
     @required this.onEmpty,
     @required this.onError,
-    this.pageRefresh,
     this.pullToRefresh = false,
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
@@ -47,7 +46,6 @@ class PaginationView<T> extends StatefulWidget {
   final Widget onEmpty;
   final EdgeInsets padding;
   final PaginationBuilder<T> pageFetch;
-  final PaginationBuilder<T> pageRefresh;
   final PaginationViewType paginationViewType;
   final ScrollPhysics physics;
   final List<T> preloadedItems;
@@ -79,11 +77,13 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       ..fetchPaginatedList();
   }
 
-  void refresh() {
-    if (widget.pageRefresh == null) {
-      throw Exception('pageRefresh parameter cannot be null');
-    }
-    _cubit.refreshPaginatedList(_scrollController);
+  Future<void> refresh() async {
+    await _cubit.refreshPaginatedList();
+    _scrollController.animateTo(
+      0,
+      curve: Curves.easeIn,
+      duration: const Duration(milliseconds: 200),
+    );
   }
 
   @override
@@ -102,18 +102,11 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           }
           if (widget.pullToRefresh) {
             return RefreshIndicator(
-              onRefresh: () async => refresh(),
+              onRefresh: refresh,
               child: _buildCustomScrollView(loadedState),
             );
           }
           return _buildCustomScrollView(loadedState);
-          // if (widget.pullToRefresh) {
-          //   return RefreshIndicator(
-          //     onRefresh: () async => refresh(),
-          //     child: _buildNewListView(loadedState),
-          //   );
-          // }
-          // return _buildNewListView(loadedState);
         }
       },
     );

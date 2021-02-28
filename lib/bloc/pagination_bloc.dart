@@ -24,20 +24,19 @@ class PaginationCubit<T> extends Cubit<PaginationState<T>> {
     }
   }
 
-  void refreshPaginatedList(ScrollController scrollController) {
-    _fetchAndEmitPaginatedList(previousList: preloadedItems);
-    if (scrollController.hasClients) {
-      scrollController.jumpTo(0);
-    }
+  Future<void> refreshPaginatedList() async {
+    await _fetchAndEmitPaginatedList(previousList: preloadedItems);
   }
 
-  void _fetchAndEmitPaginatedList({List<T> previousList = const []}) async {
+  Future<void> _fetchAndEmitPaginatedList({
+    List<T> previousList = const [],
+  }) async {
     try {
       final newList = await callback(
         _getAbsoluteOffset(previousList.length),
       );
       emit(PaginationLoaded(
-        items: previousList + newList,
+        items: List<T>.from(previousList + newList),
         hasReachedEnd: newList.isEmpty,
       ));
     } on Exception catch (error) {

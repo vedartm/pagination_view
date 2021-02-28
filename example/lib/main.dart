@@ -91,7 +91,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
         pageFetch: pageFetch,
-        pageRefresh: pageRefresh,
         pullToRefresh: true,
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),
@@ -111,22 +110,16 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<User>> pageFetch(int offset) async {
     print(offset);
-    page++;
+    page = (offset / 20).round();
     final Faker faker = Faker();
     final List<User> nextUsersList = List.generate(
-      10,
+      20,
       (int index) => User(
         faker.person.name() + ' - $page$index',
         faker.internet.email(),
       ),
     );
     await Future<List<User>>.delayed(Duration(seconds: 1));
-
-    return page == 7 ? [] : nextUsersList;
-  }
-
-  Future<List<User>> pageRefresh(int offset) async {
-    page = -1;
-    return pageFetch(offset);
+    return page == 5 ? [] : nextUsersList;
   }
 }
