@@ -7,7 +7,7 @@ class PaginationInitial<T> extends PaginationState<T> {}
 
 class PaginationError<T> extends PaginationState<T> {
   final dynamic error;
-  PaginationError({@required this.error});
+  PaginationError({required this.error});
 
   @override
   bool operator ==(Object o) {
@@ -22,8 +22,8 @@ class PaginationError<T> extends PaginationState<T> {
 
 class PaginationLoaded<T> extends PaginationState<T> {
   PaginationLoaded({
-    @required this.items,
-    @required this.hasReachedEnd,
+    required this.items,
+    required this.hasReachedEnd,
   });
 
   final bool hasReachedEnd;
@@ -42,8 +42,8 @@ class PaginationLoaded<T> extends PaginationState<T> {
   }
 
   PaginationLoaded<T> copyWith({
-    List<T> items,
-    bool hasReachedEnd,
+    List<T>? items,
+    bool? hasReachedEnd,
   }) {
     return PaginationLoaded<T>(
       items: items ?? this.items,

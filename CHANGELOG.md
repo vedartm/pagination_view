@@ -1,3 +1,7 @@
+## 2.0.0-nullsafety.0
+
+- BREAKING: Opt into null safety
+
 ## 1.0.4+2
 
 - Updates pub packages

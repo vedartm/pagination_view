@@ -20,7 +20,7 @@ class PaginationCubit<T> extends Cubit<PaginationState<T>> {
     } else if (state is PaginationLoaded<T>) {
       final loadedState = state as PaginationLoaded;
       if (loadedState.hasReachedEnd) return;
-      _fetchAndEmitPaginatedList(previousList: loadedState.items);
+      _fetchAndEmitPaginatedList(previousList: loadedState.items as List<T>);
     }
   }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EmptySeparator extends StatelessWidget {
-  const EmptySeparator({Key key}) : super(key: key);
+  const EmptySeparator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

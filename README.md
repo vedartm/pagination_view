@@ -19,7 +19,7 @@ In your pubspec.yaml
 
 ```yaml
 dependencies:
-  pagination_view: ^1.0.4+2
+  pagination_view: ^2.0.0-nullsafety.0
 ```
 
 ```dart

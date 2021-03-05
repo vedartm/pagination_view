@@ -14,15 +14,15 @@ enum PaginationViewType { listView, gridView }
 
 class PaginationView<T> extends StatefulWidget {
   PaginationView({
-    Key key,
-    @required this.itemBuilder,
-    @required this.pageFetch,
-    @required this.onEmpty,
-    @required this.onError,
+    Key? key,
+    required this.itemBuilder,
+    required this.pageFetch,
+    required this.onEmpty,
+    required this.onError,
     this.pullToRefresh = false,
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-    List<T> preloadedItems,
+    List<T>? preloadedItems,
     this.initialLoader = const InitialLoader(),
     this.bottomLoader = const BottomLoader(),
     this.paginationViewType = PaginationViewType.listView,
@@ -39,19 +39,19 @@ class PaginationView<T> extends StatefulWidget {
         super(key: key);
 
   final Widget bottomLoader;
-  final Widget footer;
+  final Widget? footer;
   final SliverGridDelegate gridDelegate;
-  final Widget header;
+  final Widget? header;
   final Widget initialLoader;
   final Widget onEmpty;
   final EdgeInsets padding;
   final PaginationBuilder<T> pageFetch;
   final PaginationViewType paginationViewType;
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
   final List<T> preloadedItems;
   final bool pullToRefresh;
   final bool reverse;
-  final ScrollController scrollController;
+  final ScrollController? scrollController;
   final Axis scrollDirection;
   final bool shrinkWrap;
 
@@ -60,14 +60,14 @@ class PaginationView<T> extends StatefulWidget {
 
   final Widget Function(BuildContext, T, int) itemBuilder;
 
-  final Widget Function(BuildContext, int) separatorBuilder;
+  final Widget Function(BuildContext, int)? separatorBuilder;
 
   final Widget Function(dynamic) onError;
 }
 
 class PaginationViewState<T> extends State<PaginationView<T>> {
-  PaginationCubit<T> _cubit;
-  ScrollController _scrollController;
+  PaginationCubit<T>? _cubit;
+  ScrollController? _scrollController;
 
   @override
   void initState() {
@@ -78,8 +78,8 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   }
 
   Future<void> refresh() async {
-    await _cubit.refreshPaginatedList();
-    _scrollController.animateTo(
+    await _cubit!.refreshPaginatedList();
+    _scrollController!.animateTo(
       0,
       curve: Curves.easeIn,
       duration: const Duration(milliseconds: 200),
@@ -89,7 +89,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PaginationCubit<T>, PaginationState<T>>(
-      cubit: _cubit,
+      bloc: _cubit,
       builder: (context, state) {
         if (state is PaginationInitial<T>) {
           return widget.initialLoader;
@@ -138,7 +138,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           if (index >= loadedState.items.length) {
-            _cubit.fetchPaginatedList();
+            _cubit!.fetchPaginatedList();
             return widget.bottomLoader;
           }
           return widget.itemBuilder(context, loadedState.items[index], index);
@@ -157,14 +157,14 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           final itemIndex = index ~/ 2;
           if (index.isEven) {
             if (itemIndex >= loadedState.items.length) {
-              _cubit.fetchPaginatedList();
+              _cubit!.fetchPaginatedList();
               return widget.bottomLoader;
             }
             return widget.itemBuilder(
                 context, loadedState.items[itemIndex], itemIndex);
           }
           return widget.separatorBuilder != null
-              ? widget.separatorBuilder(context, itemIndex)
+              ? widget.separatorBuilder!(context, itemIndex)
               : const EmptySeparator();
         },
         semanticIndexCallback: (widget, localIndex) {
