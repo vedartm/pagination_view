@@ -1,3 +1,7 @@
+## 1.0.4+2
+
+- Updates pub packages
+
 ## 1.0.4+1
 
 - Fixes refresh issue and removes `pageRefersh`
