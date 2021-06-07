@@ -120,14 +120,14 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       scrollDirection: widget.scrollDirection,
       physics: widget.physics,
       slivers: [
-        if (widget.header != null) SliverToBoxAdapter(child: widget.header),
+        if (widget.header != null) widget.header!,
         SliverPadding(
           padding: widget.padding,
           sliver: widget.paginationViewType == PaginationViewType.gridView
               ? _buildSliverGrid(loadedState)
               : _buildSliverList(loadedState),
         ),
-        if (widget.footer != null) SliverToBoxAdapter(child: widget.footer),
+        if (widget.footer != null) widget.footer!,
       ],
     );
   }
