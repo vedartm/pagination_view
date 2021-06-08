@@ -1,6 +1,11 @@
+## 2.0.0
+
+- **BREAKING**: `header` and `footer` accepts only sliver widget. If you want to add a normal widget wrap it with `SliverToBoxAdapter(child: YourWidget())`. Check example for more clarity.
+- Updates dependencies to latest version.
+
 ## 2.0.0-nullsafety.0
 
-- BREAKING: Opt into null safety
+- **BREAKING**: Opt into null safety
 
 ## 1.0.4+2
 
@@ -12,7 +17,7 @@
 
 ## 1.0.4
 
-- Added support for `header` and `footer` 
+- Added support for `header` and `footer`
 
 ## 1.0.3+2
 
