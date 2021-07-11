@@ -8,7 +8,7 @@
 
 [![Actions Status](https://github.com/excogitatr/pagination_view/workflows/build/badge.svg)](https://github.com/excogitatr/pagination_view/actions?query=workflow%3Abuild)
 [![pub package](https://img.shields.io/pub/v/pagination_view.svg)](https://pub.dev/packages/pagination_view)
-<a href="https://pub.dev/packages/pagination_view/score"><img src="https://badges.bar/pagination_view/pub%20points" alt="pub points"></a>
+[![pub points](https://badges.bar/pagination_view/pub%20points)](https://pub.dev/packages/pagination_view/score)
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
