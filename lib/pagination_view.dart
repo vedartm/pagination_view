@@ -94,11 +94,25 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
         if (state is PaginationInitial<T>) {
           return widget.initialLoader;
         } else if (state is PaginationError<T>) {
-          return widget.onError(state.error);
+          if(widget.pullToRefresh){
+            return RefreshIndicator(
+                onRefresh: refresh,
+                child: _buildSingleWidgetView(widget.onError(state.error))
+            );
+          } else {
+            return widget.onError(state.error);
+          }
         } else {
           final loadedState = state as PaginationLoaded<T>;
           if (loadedState.items.isEmpty) {
-            return widget.onEmpty;
+            if(widget.pullToRefresh){
+              return RefreshIndicator(
+                onRefresh: refresh,
+                child: _buildSingleWidgetView(widget.onEmpty)
+              );
+            } else {
+              return widget.onEmpty;
+            }
           }
           if (widget.pullToRefresh) {
             return RefreshIndicator(
@@ -109,6 +123,15 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           return _buildCustomScrollView(loadedState);
         }
       },
+    );
+  }
+
+  _buildSingleWidgetView(Widget onError) {
+    return Stack(
+      children: <Widget>[
+        onError,
+        ListView()
+      ],
     );
   }
 

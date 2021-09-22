@@ -110,17 +110,17 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<User>> pageFetch(int offset) async {
     print(offset);
-    page = (offset / 20).round();
+    page = (offset / 5).round();
     final Faker faker = Faker();
     final List<User> nextUsersList = List.generate(
-      20,
+      5,
       (int index) => User(
         faker.person.name() + ' - $page$index',
         faker.internet.email(),
       ),
     );
     await Future<List<User>>.delayed(Duration(seconds: 1));
-    return page == 5 ? [] : nextUsersList;
+    return page == 0 ? [] : nextUsersList;
   }
 }
 
