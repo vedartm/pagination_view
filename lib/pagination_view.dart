@@ -79,11 +79,13 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
 
   Future<void> refresh() async {
     await _cubit!.refreshPaginatedList();
-    _scrollController!.animateTo(
-      0,
-      curve: Curves.easeIn,
-      duration: const Duration(milliseconds: 200),
-    );
+    if(_scrollController!.hasClients){
+      _scrollController!.animateTo(
+        0,
+        curve: Curves.easeIn,
+        duration: const Duration(milliseconds: 200),
+      );
+    }
   }
 
   @override
