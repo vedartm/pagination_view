@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     await Future<List<User>>.delayed(Duration(seconds: 1));
-    return page == 0 ? [] : nextUsersList;
+    return page == 1 ? [] : nextUsersList;
   }
 }
 

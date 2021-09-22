@@ -30,7 +30,7 @@ class PaginationView<T> extends StatefulWidget {
     this.reverse = false,
     this.scrollDirection = Axis.vertical,
     this.padding = const EdgeInsets.all(0),
-    this.physics = const AlwaysScrollableScrollPhysics(),
+    this.physics,
     this.separatorBuilder,
     this.scrollController,
     this.header,
@@ -136,21 +136,26 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   }
 
   _buildCustomScrollView(PaginationLoaded<T> loadedState) {
-    return CustomScrollView(
-      reverse: widget.reverse,
-      controller: _scrollController,
-      shrinkWrap: widget.shrinkWrap,
-      scrollDirection: widget.scrollDirection,
-      physics: widget.physics,
-      slivers: [
-        if (widget.header != null) widget.header!,
-        SliverPadding(
-          padding: widget.padding,
-          sliver: widget.paginationViewType == PaginationViewType.gridView
-              ? _buildSliverGrid(loadedState)
-              : _buildSliverList(loadedState),
+    return Stack(
+      children: [
+        CustomScrollView(
+          reverse: widget.reverse,
+          controller: _scrollController,
+          shrinkWrap: widget.shrinkWrap,
+          scrollDirection: widget.scrollDirection,
+          physics: widget.physics,
+          slivers: [
+            if (widget.header != null) widget.header!,
+            SliverPadding(
+              padding: widget.padding,
+              sliver: widget.paginationViewType == PaginationViewType.gridView
+                  ? _buildSliverGrid(loadedState)
+                  : _buildSliverList(loadedState),
+            ),
+            if (widget.footer != null) widget.footer!,
+          ],
         ),
-        if (widget.footer != null) widget.footer!,
+        ListView()
       ],
     );
   }
