@@ -30,7 +30,7 @@ class PaginationView<T> extends StatefulWidget {
     this.reverse = false,
     this.scrollDirection = Axis.vertical,
     this.padding = const EdgeInsets.all(0),
-    this.physics,
+    this.physics = const AlwaysScrollableScrollPhysics(),
     this.separatorBuilder,
     this.scrollController,
     this.header,

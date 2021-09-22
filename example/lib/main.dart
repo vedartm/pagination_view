@@ -61,8 +61,8 @@ class _HomePageState extends State<HomePage> {
       ),
       body: PaginationView<User>(
         key: key,
-        header: Text('Header text'),
-        footer: Text('Footer text'),
+        header: SliverToBoxAdapter(child: Text('Header text')),
+        footer:  SliverToBoxAdapter(child: Text('Footer text')),
         preloadedItems: <User>[
           User(faker.person.name(), faker.internet.email()),
           User(faker.person.name(), faker.internet.email()),
@@ -122,4 +122,20 @@ class _HomePageState extends State<HomePage> {
     await Future<List<User>>.delayed(Duration(seconds: 1));
     return page == 5 ? [] : nextUsersList;
   }
+}
+
+
+class PaginationTestOnDifferentSize extends StatelessWidget{
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(flex: 5, child: Container()),
+          Expanded(flex: 3, child: HomePage(),)
+        ],
+      ),
+    );
+  }
+
 }
