@@ -136,26 +136,21 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   }
 
   _buildCustomScrollView(PaginationLoaded<T> loadedState) {
-    return Stack(
-      children: [
-        CustomScrollView(
-          reverse: widget.reverse,
-          controller: _scrollController,
-          shrinkWrap: widget.shrinkWrap,
-          scrollDirection: widget.scrollDirection,
-          physics: widget.physics,
-          slivers: [
-            if (widget.header != null) widget.header!,
-            SliverPadding(
-              padding: widget.padding,
-              sliver: widget.paginationViewType == PaginationViewType.gridView
-                  ? _buildSliverGrid(loadedState)
-                  : _buildSliverList(loadedState),
-            ),
-            if (widget.footer != null) widget.footer!,
-          ],
+    return CustomScrollView(
+      reverse: widget.reverse,
+      controller: _scrollController,
+      shrinkWrap: widget.shrinkWrap,
+      scrollDirection: widget.scrollDirection,
+      physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
+      slivers: [
+        if (widget.header != null) widget.header!,
+        SliverPadding(
+          padding: widget.padding,
+          sliver: widget.paginationViewType == PaginationViewType.gridView
+              ? _buildSliverGrid(loadedState)
+              : _buildSliverList(loadedState),
         ),
-        ListView()
+        if (widget.footer != null) widget.footer!,
       ],
     );
   }
