@@ -96,11 +96,25 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
         if (state is PaginationInitial<T>) {
           return widget.initialLoader;
         } else if (state is PaginationError<T>) {
-          return widget.onError(state.error);
+          if(widget.pullToRefresh){
+            return RefreshIndicator(
+                onRefresh: refresh,
+                child: _buildSingleWidgetView(widget.onError(state.error))
+            );
+          } else {
+            return widget.onError(state.error);
+          }
         } else {
           final loadedState = state as PaginationLoaded<T>;
           if (loadedState.items.isEmpty) {
-            return widget.onEmpty;
+            if(widget.pullToRefresh){
+              return RefreshIndicator(
+                onRefresh: refresh,
+                child: _buildSingleWidgetView(widget.onEmpty)
+              );
+            } else {
+              return widget.onEmpty;
+            }
           }
           if (widget.pullToRefresh) {
             return RefreshIndicator(
@@ -114,13 +128,23 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
+  _buildSingleWidgetView(Widget widget) {
+    return Stack(
+      children: <Widget>[
+        ListView(),
+        widget,
+
+      ],
+    );
+  }
+
   _buildCustomScrollView(PaginationLoaded<T> loadedState) {
     return CustomScrollView(
       reverse: widget.reverse,
       controller: _scrollController,
       shrinkWrap: widget.shrinkWrap,
       scrollDirection: widget.scrollDirection,
-      physics: widget.physics,
+      physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
       slivers: [
         if (widget.header != null) widget.header!,
         SliverPadding(

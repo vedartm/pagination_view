@@ -1,6 +1,7 @@
 import 'package:example/user.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:pagination_view/pagination_view.dart';
 
 void main() => runApp(MyApp());
@@ -26,12 +27,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int page;
   PaginationViewType paginationViewType;
+  Axis scrollDirection;
   GlobalKey<PaginationViewState> key;
 
   @override
   void initState() {
     page = -1;
     paginationViewType = PaginationViewType.listView;
+    scrollDirection = Axis.horizontal;
     key = GlobalKey<PaginationViewState>();
     super.initState();
   }
@@ -54,6 +57,16 @@ class _HomePageState extends State<HomePage> {
                       () => paginationViewType = PaginationViewType.listView),
                 ),
           IconButton(
+            icon: Icon(Icons.android),
+            onPressed: () {
+              setState(() {
+                scrollDirection = scrollDirection == Axis.horizontal
+                    ? Axis.vertical
+                    : Axis.horizontal;
+              });
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () => key.currentState.refresh(),
           ),
@@ -61,20 +74,23 @@ class _HomePageState extends State<HomePage> {
       ),
       body: PaginationView<User>(
         key: key,
-        header: Text('Header text'),
-        footer: Text('Footer text'),
-        preloadedItems: <User>[
-          User(faker.person.name(), faker.internet.email()),
-          User(faker.person.name(), faker.internet.email()),
-        ],
+        header: SliverToBoxAdapter(child: Text('Header text')),
+        footer: SliverToBoxAdapter(child: Text('Footer text')),
+        // preloadedItems: <User>[
+        //   User(faker.person.name(), faker.internet.email()),
+        //   User(faker.person.name(), faker.internet.email()),
+        // ],
         paginationViewType: paginationViewType,
         itemBuilder: (BuildContext context, User user, int index) =>
             (paginationViewType == PaginationViewType.listView)
-                ? ListTile(
-                    title: Text(user.name),
-                    subtitle: Text(user.email),
-                    leading: CircleAvatar(
-                      child: Icon(Icons.person),
+                ? Container(
+                    width: scrollDirection == Axis.horizontal ? 300 : null,
+                    child: ListTile(
+                      title: Text(user.name),
+                      subtitle: Text(user.email),
+                      leading: CircleAvatar(
+                        child: Icon(Icons.person),
+                      ),
                     ),
                   )
                 : GridTile(
@@ -91,7 +107,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
         pageFetch: pageFetch,
+        scrollDirection: scrollDirection,
         pullToRefresh: true,
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          childAspectRatio: 10 / 16,
+          maxCrossAxisExtent: 320,
+        ),
+        physics: BouncingScrollPhysics(),
         onError: (dynamic error) => Center(
           child: Text('Some error occured'),
         ),
@@ -110,16 +132,33 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<User>> pageFetch(int offset) async {
     print(offset);
-    page = (offset / 20).round();
+    page = (offset / 5).round();
     final Faker faker = Faker();
     final List<User> nextUsersList = List.generate(
-      20,
+      5,
       (int index) => User(
         faker.person.name() + ' - $page$index',
         faker.internet.email(),
       ),
     );
     await Future<List<User>>.delayed(Duration(seconds: 1));
-    return page == 5 ? [] : nextUsersList;
+    return page == 0 ? [] : nextUsersList;
+  }
+}
+
+class PaginationTestOnDifferentSize extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(flex: 5, child: Container()),
+          Expanded(
+            flex: 3,
+            child: HomePage(),
+          )
+        ],
+      ),
+    );
   }
 }
