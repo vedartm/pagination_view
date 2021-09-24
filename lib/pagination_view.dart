@@ -128,10 +128,10 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSingleWidgetView(Widget onError) {
+  _buildSingleWidgetView(Widget widget) {
     return Stack(
       children: <Widget>[
-        onError,
+        widget,
         ListView()
       ],
     );
