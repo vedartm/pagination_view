@@ -76,10 +76,10 @@ class _HomePageState extends State<HomePage> {
         key: key,
         header: SliverToBoxAdapter(child: Text('Header text')),
         footer: SliverToBoxAdapter(child: Text('Footer text')),
-        preloadedItems: <User>[
-          User(faker.person.name(), faker.internet.email()),
-          User(faker.person.name(), faker.internet.email()),
-        ],
+        // preloadedItems: <User>[
+        //   User(faker.person.name(), faker.internet.email()),
+        //   User(faker.person.name(), faker.internet.email()),
+        // ],
         paginationViewType: paginationViewType,
         itemBuilder: (BuildContext context, User user, int index) =>
             (paginationViewType == PaginationViewType.listView)
@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     await Future<List<User>>.delayed(Duration(seconds: 1));
-    return page == 3 ? [] : nextUsersList;
+    return page == 0 ? [] : nextUsersList;
   }
 }
 

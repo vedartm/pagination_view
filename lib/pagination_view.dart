@@ -131,8 +131,9 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   _buildSingleWidgetView(Widget widget) {
     return Stack(
       children: <Widget>[
+        ListView(),
         widget,
-        ListView()
+
       ],
     );
   }
