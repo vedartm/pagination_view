@@ -12,8 +12,8 @@ dependencies:
     sdk: flutter
 
   # State management
-  bloc: ^7.2.1
-  flutter_bloc: ^7.3.3
+  bloc: ^8.0.1
+  flutter_bloc: ^8.0.0
 
 dev_dependencies:
   flutter_test:
@@ -23,5 +23,5 @@ dev_dependencies:
   flutter_lints: ^1.0.4
 
   # Testing
-  bloc_test: ^8.5.0
+  bloc_test: ^9.0.1
   mockito: ^5.0.16
