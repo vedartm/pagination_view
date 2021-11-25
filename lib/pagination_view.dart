@@ -112,6 +112,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           if (loadedState.items.isEmpty) {
             if (widget.pullToRefresh) {
               return RefreshIndicator(
+                color: widget.color,
                 onRefresh: refresh,
                 child: _buildSingleWidgetView(widget.onEmpty),
               );
@@ -121,6 +122,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           }
           if (widget.pullToRefresh) {
             return RefreshIndicator(
+              color: widget.color,
               onRefresh: refresh,
               child: _buildCustomScrollView(loadedState),
             );
