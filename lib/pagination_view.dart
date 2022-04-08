@@ -20,6 +20,7 @@ class PaginationView<T> extends StatefulWidget {
     required this.onEmpty,
     required this.onError,
     this.pullToRefresh = false,
+    this.refreshIndicatorColor = Colors.blue,
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
     List<T>? preloadedItems,
@@ -50,6 +51,7 @@ class PaginationView<T> extends StatefulWidget {
   final ScrollPhysics? physics;
   final List<T> preloadedItems;
   final bool pullToRefresh;
+  final Color refreshIndicatorColor;
   final bool reverse;
   final ScrollController? scrollController;
   final Axis scrollDirection;
@@ -98,6 +100,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
         } else if (state is PaginationError<T>) {
           if (widget.pullToRefresh) {
             return RefreshIndicator(
+              color: widget.refreshIndicatorColor,
               onRefresh: refresh,
               child: _buildSingleWidgetView(widget.onError(state.error)),
             );
@@ -109,6 +112,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           if (loadedState.items.isEmpty) {
             if (widget.pullToRefresh) {
               return RefreshIndicator(
+                color: widget.refreshIndicatorColor,
                 onRefresh: refresh,
                 child: _buildSingleWidgetView(widget.onEmpty),
               );
@@ -118,6 +122,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           }
           if (widget.pullToRefresh) {
             return RefreshIndicator(
+              color: widget.refreshIndicatorColor,
               onRefresh: refresh,
               child: _buildCustomScrollView(loadedState),
             );
