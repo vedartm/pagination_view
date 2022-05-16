@@ -1,7 +1,6 @@
 import 'package:example/user.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:pagination_view/pagination_view.dart';
 
 void main() => runApp(MyApp());
