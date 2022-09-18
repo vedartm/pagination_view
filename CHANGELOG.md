@@ -1,3 +1,7 @@
+## 2.1.0
+
+- Updated pub packages and the example app
+
 ## 2.0.0
 
 - **BREAKING**: `header` and `footer` accepts only sliver widget. If you want to add a normal widget wrap it with `SliverToBoxAdapter(child: YourWidget())`. Check example for more clarity.
