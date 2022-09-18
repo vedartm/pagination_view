@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     page = -1;
     paginationViewType = PaginationViewType.listView;
-    scrollDirection = Axis.horizontal;
+    scrollDirection = Axis.vertical;
     key = GlobalKey<PaginationViewState>();
     super.initState();
   }
@@ -75,10 +75,10 @@ class _HomePageState extends State<HomePage> {
         key: key,
         header: SliverToBoxAdapter(child: Text('Header text')),
         footer: SliverToBoxAdapter(child: Text('Footer text')),
-        // preloadedItems: <User>[
-        //   User(faker.person.name(), faker.internet.email()),
-        //   User(faker.person.name(), faker.internet.email()),
-        // ],
+        preloadedItems: <User>[
+          User('Preloaded person #1', faker.internet.email()),
+          User('Preloaded person #2', faker.internet.email()),
+        ],
         paginationViewType: paginationViewType,
         itemBuilder: (BuildContext context, User user, int index) =>
             (paginationViewType == PaginationViewType.listView)

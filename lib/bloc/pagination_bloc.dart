@@ -35,7 +35,7 @@ class PaginationCubit<T> extends Cubit<PaginationState<T>> {
         _getAbsoluteOffset(previousList.length),
       );
       emit(PaginationLoaded(
-        items: List<T>.from(previousList + newList),
+        items: List<T>.from(previousList)..addAll(newList),
         hasReachedEnd: newList.isEmpty,
       ));
     } on Exception catch (error) {
