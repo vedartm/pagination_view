@@ -1,5 +1,7 @@
-## 2.1.0
+## 3.0.0
 
+- **BREAKING**: Change signature of `onError` from `Widget Function(dynamic)` to `Widget Function(Exception)`
+- **BREAKING**: Change minimum required SDK version from `2.12` to `2.17`
 - Updated pub packages and the example app
 
 ## 2.0.0

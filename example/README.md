@@ -95,8 +95,8 @@ class _HomePageState extends State<HomePage> {
                   ),
         pageFetch: pageFetch,
         pullToRefresh: true,
-        onError: (dynamic error) => Center(
-          child: Text('Some error occured'),
+        onError: (Excpetion error) => Center(
+          child: Text('Some error occurred'),
         ),
         onEmpty: Center(
           child: Text('Sorry! This is empty'),

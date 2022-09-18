@@ -1,11 +1,11 @@
 name: pagination_view
 description: Flutter package to simplify pagination of list of items from the internet.
-version: 2.1.0
+version: 3.0.0
 issue_tracker: https://github.com/excogitatr/pagination_view/issues
 homepage: https://github.com/excogitatr/pagination_view
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:

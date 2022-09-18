@@ -113,8 +113,8 @@ class _HomePageState extends State<HomePage> {
           maxCrossAxisExtent: 320,
         ),
         physics: BouncingScrollPhysics(),
-        onError: (dynamic error) => Center(
-          child: Text('Some error occured'),
+        onError: (Exception error) => Center(
+          child: Text('Some error occurred'),
         ),
         onEmpty: Center(
           child: Text('Sorry! This is empty'),

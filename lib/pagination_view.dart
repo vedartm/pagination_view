@@ -64,7 +64,7 @@ class PaginationView<T> extends StatefulWidget {
 
   final Widget Function(BuildContext, int)? separatorBuilder;
 
-  final Widget Function(dynamic) onError;
+  final Widget Function(Exception) onError;
 }
 
 class PaginationViewState<T> extends State<PaginationView<T>> {
