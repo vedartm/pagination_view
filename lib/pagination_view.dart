@@ -133,7 +133,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSingleWidgetView(Widget widget) {
+  Widget _buildSingleWidgetView(Widget widget) {
     return Stack(
       children: <Widget>[
         ListView(),
@@ -142,7 +142,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildCustomScrollView(PaginationLoaded<T> loadedState) {
+  Widget _buildCustomScrollView(PaginationLoaded<T> loadedState) {
     return CustomScrollView(
       reverse: widget.reverse,
       controller: _scrollController,
@@ -162,7 +162,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSliverGrid(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverGrid(PaginationLoaded<T> loadedState) {
     return SliverGrid(
       gridDelegate: widget.gridDelegate,
       delegate: SliverChildBuilderDelegate(
@@ -180,7 +180,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSliverList(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverList(PaginationLoaded<T> loadedState) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
