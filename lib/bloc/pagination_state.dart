@@ -6,7 +6,8 @@ abstract class PaginationState<T> {}
 class PaginationInitial<T> extends PaginationState<T> {}
 
 class PaginationError<T> extends PaginationState<T> {
-  final dynamic error;
+  final Exception error;
+
   PaginationError({required this.error});
 
   @override

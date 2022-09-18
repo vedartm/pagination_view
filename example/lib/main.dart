@@ -1,7 +1,6 @@
 import 'package:example/user.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:pagination_view/pagination_view.dart';
 
 void main() => runApp(MyApp());
@@ -34,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     page = -1;
     paginationViewType = PaginationViewType.listView;
-    scrollDirection = Axis.horizontal;
+    scrollDirection = Axis.vertical;
     key = GlobalKey<PaginationViewState>();
     super.initState();
   }
@@ -76,10 +75,10 @@ class _HomePageState extends State<HomePage> {
         key: key,
         header: SliverToBoxAdapter(child: Text('Header text')),
         footer: SliverToBoxAdapter(child: Text('Footer text')),
-        // preloadedItems: <User>[
-        //   User(faker.person.name(), faker.internet.email()),
-        //   User(faker.person.name(), faker.internet.email()),
-        // ],
+        preloadedItems: <User>[
+          User('Preloaded person #1', faker.internet.email()),
+          User('Preloaded person #2', faker.internet.email()),
+        ],
         paginationViewType: paginationViewType,
         itemBuilder: (BuildContext context, User user, int index) =>
             (paginationViewType == PaginationViewType.listView)
@@ -114,8 +113,8 @@ class _HomePageState extends State<HomePage> {
           maxCrossAxisExtent: 320,
         ),
         physics: BouncingScrollPhysics(),
-        onError: (dynamic error) => Center(
-          child: Text('Some error occured'),
+        onError: (Exception error) => Center(
+          child: Text('Some error occurred'),
         ),
         onEmpty: Center(
           child: Text('Sorry! This is empty'),
@@ -131,18 +130,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<User>> pageFetch(int offset) async {
-    print(offset);
-    page = (offset / 5).round();
+    print('pageFetch: $offset');
+    page = (offset / 20).round();
     final Faker faker = Faker();
     final List<User> nextUsersList = List.generate(
-      5,
+      20,
       (int index) => User(
         faker.person.name() + ' - $page$index',
         faker.internet.email(),
       ),
     );
     await Future<List<User>>.delayed(Duration(seconds: 1));
-    return page == 0 ? [] : nextUsersList;
+    return page == 5 ? [] : nextUsersList;
   }
 }
 

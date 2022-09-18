@@ -22,7 +22,7 @@ In your pubspec.yaml
 
 ```yaml
 dependencies:
-  pagination_view: ^2.0.0-nullsafety.0
+  pagination_view: ^3.0.0
 ```
 
 ```dart
@@ -49,8 +49,8 @@ import 'package:pagination_view/pagination_view.dart';
         footer: Text('Footer text'),
         paginationViewType: PaginationViewType.listView // optional
         pageFetch: pageFetch,
-        onError: (dynamic error) => Center(
-          child: Text('Some error occured'),
+        onError: (Exception error) => Center(
+          child: Text('Some error occurred'),
         ),
         onEmpty: Center(
           child: Text('Sorry! This is empty'),
