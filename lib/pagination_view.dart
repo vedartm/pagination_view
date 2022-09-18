@@ -13,38 +13,15 @@ typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
 enum PaginationViewType { listView, gridView }
 
 class PaginationView<T> extends StatefulWidget {
-  PaginationView({
-    Key? key,
-    required this.itemBuilder,
-    required this.pageFetch,
-    required this.onEmpty,
-    required this.onError,
-    this.pullToRefresh = false,
-    this.refreshIndicatorColor = Colors.blue,
-    this.gridDelegate =
-        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-    List<T>? preloadedItems,
-    this.initialLoader = const InitialLoader(),
-    this.bottomLoader = const BottomLoader(),
-    this.paginationViewType = PaginationViewType.listView,
-    this.shrinkWrap = false,
-    this.reverse = false,
-    this.scrollDirection = Axis.vertical,
-    this.padding = const EdgeInsets.all(0),
-    this.physics,
-    this.separatorBuilder,
-    this.scrollController,
-    this.header,
-    this.footer,
-  })  : preloadedItems = preloadedItems ?? <T>[],
-        super(key: key);
-
   final Widget bottomLoader;
   final Widget? footer;
   final SliverGridDelegate gridDelegate;
   final Widget? header;
   final Widget initialLoader;
   final Widget onEmpty;
+  final Widget Function(BuildContext, T, int) itemBuilder;
+  final Widget Function(BuildContext, int)? separatorBuilder;
+  final Widget Function(Exception) onError;
   final EdgeInsets padding;
   final PaginationBuilder<T> pageFetch;
   final PaginationViewType paginationViewType;
@@ -57,14 +34,34 @@ class PaginationView<T> extends StatefulWidget {
   final Axis scrollDirection;
   final bool shrinkWrap;
 
+  const PaginationView({
+    required this.itemBuilder,
+    required this.pageFetch,
+    required this.onEmpty,
+    required this.onError,
+    this.pullToRefresh = false,
+    this.refreshIndicatorColor = Colors.blue,
+    this.gridDelegate =
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+    // List<T>? preloadedItems,
+    this.initialLoader = const InitialLoader(),
+    this.bottomLoader = const BottomLoader(),
+    this.paginationViewType = PaginationViewType.listView,
+    this.shrinkWrap = false,
+    this.reverse = false,
+    this.scrollDirection = Axis.vertical,
+    this.padding = const EdgeInsets.all(0),
+    this.physics,
+    this.separatorBuilder,
+    this.scrollController,
+    this.header,
+    this.footer,
+    this.preloadedItems = const [],
+    super.key,
+  });
+
   @override
   PaginationViewState<T> createState() => PaginationViewState<T>();
-
-  final Widget Function(BuildContext, T, int) itemBuilder;
-
-  final Widget Function(BuildContext, int)? separatorBuilder;
-
-  final Widget Function(Exception) onError;
 }
 
 class PaginationViewState<T> extends State<PaginationView<T>> {
@@ -201,7 +198,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           if (localIndex.isEven) {
             return localIndex ~/ 2;
           }
-          // ignore: avoid_returning_null
+
           return null;
         },
         childCount: max(
