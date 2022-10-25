@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +21,7 @@ class PaginationView<T> extends StatefulWidget {
     required this.onEmpty,
     required this.onError,
     this.pullToRefresh = false,
+    this.pullToRefreshCupertino = false,
     this.refreshIndicatorColor = Colors.blue,
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
@@ -42,9 +44,13 @@ class PaginationView<T> extends StatefulWidget {
         super(key: key);
 
   final Widget bottomLoader;
+
+  /// Default false
   final bool footerAlwaysVisible;
   final List<Widget>? footer;
   final SliverGridDelegate gridDelegate;
+
+  /// Default false
   final bool headerAlwaysVisible;
   final List<Widget>? header;
   final Widget initialLoader;
@@ -55,6 +61,13 @@ class PaginationView<T> extends StatefulWidget {
   final ScrollPhysics? physics;
   final List<T> preloadedItems;
   final bool pullToRefresh;
+
+  /// Pull to refresh stylized as Cupertino
+  ///
+  /// Only if pullToRefresh == true
+  ///
+  /// Default false
+  final bool pullToRefreshCupertino;
   final Color refreshIndicatorColor;
   final bool reverse;
   final ScrollController? scrollController;
@@ -101,12 +114,21 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       builder: (context, state) {
         /// Checking that the data has already been loaded and is not empty
         bool loaded = (state is PaginationLoaded<T>) && state.items.isNotEmpty;
+
         bool showHeader = widget.header?.isNotEmpty == true &&
             (widget.headerAlwaysVisible || loaded);
         bool showFooter = widget.footer?.isNotEmpty == true &&
             (widget.footerAlwaysVisible || loaded);
+
+        /// For Cupertino styled pull to refresh need to show header
+        bool cupertinoRefresh =
+            widget.pullToRefresh && widget.pullToRefreshCupertino;
         return _buildCustomWidget(
           [
+            if (cupertinoRefresh)
+              CupertinoSliverRefreshControl(
+                onRefresh: refresh,
+              ),
             if (showHeader) ...widget.header!,
             SliverPadding(
               padding: widget.padding,
@@ -128,7 +150,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
       slivers: slivers,
     );
-    if (widget.pullToRefresh) {
+    if (widget.pullToRefresh && widget.pullToRefreshCupertino == false) {
       return RefreshIndicator(
         color: widget.refreshIndicatorColor,
         onRefresh: refresh,
