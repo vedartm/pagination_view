@@ -115,7 +115,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
             if (showHeader) ...widget.header!,
             SliverPadding(
               padding: widget.padding,
-              sliver: _buildWidget(state),
+              sliver: _buildSliverBody(state),
             ),
             if (showFooter) ...widget.footer!,
           ],
@@ -124,61 +124,61 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  /// Get only body widget, without sliver, header and footer
-  _buildWidget(PaginationState<T> state) {
+  /// Get only body widget, without header and footer
+  Widget _buildSliverBody(PaginationState<T> state) {
     if (state is PaginationInitial<T>) {
-      return widget.initialLoader;
-    } else if (state is PaginationError<T>) {
-      if (widget.pullToRefresh) {
-        return RefreshIndicator(
-          color: widget.refreshIndicatorColor,
-          onRefresh: refresh,
-          child: _buildSingleWidgetView(widget.onError(state.error)),
-        );
-      } else {
-        return widget.onError(state.error);
-      }
-    } else {
-      final loadedState = state as PaginationLoaded<T>;
-      if (loadedState.items.isEmpty) {
-        if (widget.pullToRefresh) {
-          return RefreshIndicator(
-            color: widget.refreshIndicatorColor,
-            onRefresh: refresh,
-            child: _buildSingleWidgetView(widget.onEmpty),
-          );
-        } else {
-          return widget.onEmpty;
-        }
-      }
-      if (widget.pullToRefresh) {
-        return RefreshIndicator(
-          color: widget.refreshIndicatorColor,
-          onRefresh: refresh,
-          child: _buildCustomScrollView(loadedState),
-        );
-      }
-      return _buildCustomScrollView(loadedState);
+      return _buildSliverSingleView(
+        widget.initialLoader,
+      );
     }
+    if (state is PaginationError<T>) {
+      if (widget.pullToRefresh) {
+        return _buildSliverRefreshView(widget.onError(state.error));
+      }
+      return _buildSliverSingleView(
+        widget.onError(state.error),
+      );
+    }
+    final loadedState = state as PaginationLoaded<T>;
+    if (loadedState.items.isEmpty) {
+      if (widget.pullToRefresh) {
+        return _buildSliverRefreshView(widget.onEmpty);
+      } else {
+        return _buildSliverSingleView(widget.onEmpty);
+      }
+    }
+    if (widget.pullToRefresh) {
+      return _buildSliverRefreshView(_buildSliverScrollView(loadedState));
+    }
+    return _buildSliverScrollView(loadedState);
   }
 
-  _buildSingleWidgetView(Widget widget) {
-    return Stack(
-      children: <Widget>[
-        ListView(),
-        widget,
-      ],
+  Widget _buildSliverRefreshView(Widget child) {
+    return _buildSliverSingleView(
+      RefreshIndicator(
+        color: widget.refreshIndicatorColor,
+        onRefresh: refresh,
+        child: _buildSliverSingleView(child),
+      ),
     );
   }
 
-  _buildCustomScrollView(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverSingleView(Widget child) {
+    return SliverList(
+      delegate: SliverChildListDelegate(
+        [child],
+      ),
+    );
+  }
+
+  Widget _buildSliverScrollView(PaginationLoaded<T> loadedState) {
     if (widget.paginationViewType == PaginationViewType.gridView) {
       return _buildSliverGrid(loadedState);
     }
     return _buildSliverList(loadedState);
   }
 
-  _buildSliverGrid(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverGrid(PaginationLoaded<T> loadedState) {
     return SliverGrid(
       gridDelegate: widget.gridDelegate,
       delegate: SliverChildBuilderDelegate(
@@ -196,7 +196,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSliverList(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverList(PaginationLoaded<T> loadedState) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
