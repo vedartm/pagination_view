@@ -40,9 +40,9 @@ class PaginationView<T> extends StatefulWidget {
         super(key: key);
 
   final Widget bottomLoader;
-  final Widget? footer;
+  final List<Widget>? footer;
   final SliverGridDelegate gridDelegate;
-  final Widget? header;
+  final List<Widget>? header;
   final Widget initialLoader;
   final Widget onEmpty;
   final EdgeInsets padding;
@@ -150,14 +150,14 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       scrollDirection: widget.scrollDirection,
       physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
       slivers: [
-        if (widget.header != null) widget.header!,
+        if (widget.header?.isNotEmpty == true) ...widget.header!,
         SliverPadding(
           padding: widget.padding,
           sliver: widget.paginationViewType == PaginationViewType.gridView
               ? _buildSliverGrid(loadedState)
               : _buildSliverList(loadedState),
         ),
-        if (widget.footer != null) widget.footer!,
+        if (widget.footer?.isNotEmpty == true) ...widget.footer!,
       ],
     );
   }

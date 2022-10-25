@@ -1,7 +1,6 @@
 import 'package:example/user.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:pagination_view/pagination_view.dart';
 
 void main() => runApp(MyApp());
@@ -74,8 +73,12 @@ class _HomePageState extends State<HomePage> {
       ),
       body: PaginationView<User>(
         key: key,
-        header: SliverToBoxAdapter(child: Text('Header text')),
-        footer: SliverToBoxAdapter(child: Text('Footer text')),
+        header: [
+          SliverToBoxAdapter(child: Text('Header text')),
+        ],
+        footer: [
+          SliverToBoxAdapter(child: Text('Footer text')),
+        ],
         // preloadedItems: <User>[
         //   User(faker.person.name(), faker.internet.email()),
         //   User(faker.person.name(), faker.internet.email()),
