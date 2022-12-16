@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +21,7 @@ class PaginationView<T> extends StatefulWidget {
     required this.onEmpty,
     required this.onError,
     this.pullToRefresh = false,
+    this.pullToRefreshCupertino = false,
     this.refreshIndicatorColor = Colors.blue,
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
@@ -34,15 +36,23 @@ class PaginationView<T> extends StatefulWidget {
     this.physics,
     this.separatorBuilder,
     this.scrollController,
+    this.headerAlwaysVisible = false,
     this.header,
+    this.footerAlwaysVisible = false,
     this.footer,
   })  : preloadedItems = preloadedItems ?? <T>[],
         super(key: key);
 
   final Widget bottomLoader;
-  final Widget? footer;
+
+  /// Default false
+  final bool footerAlwaysVisible;
+  final List<Widget>? footer;
   final SliverGridDelegate gridDelegate;
-  final Widget? header;
+
+  /// Default false
+  final bool headerAlwaysVisible;
+  final List<Widget>? header;
   final Widget initialLoader;
   final Widget onEmpty;
   final EdgeInsets padding;
@@ -51,6 +61,13 @@ class PaginationView<T> extends StatefulWidget {
   final ScrollPhysics? physics;
   final List<T> preloadedItems;
   final bool pullToRefresh;
+
+  /// Pull to refresh stylized as Cupertino
+  ///
+  /// Only if pullToRefresh == true
+  ///
+  /// Default false
+  final bool pullToRefreshCupertino;
   final Color refreshIndicatorColor;
   final bool reverse;
   final ScrollController? scrollController;
@@ -95,74 +112,88 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     return BlocBuilder<PaginationCubit<T>, PaginationState<T>>(
       bloc: _cubit,
       builder: (context, state) {
-        if (state is PaginationInitial<T>) {
-          return widget.initialLoader;
-        } else if (state is PaginationError<T>) {
-          if (widget.pullToRefresh) {
-            return RefreshIndicator(
-              color: widget.refreshIndicatorColor,
-              onRefresh: refresh,
-              child: _buildSingleWidgetView(widget.onError(state.error)),
-            );
-          } else {
-            return widget.onError(state.error);
-          }
-        } else {
-          final loadedState = state as PaginationLoaded<T>;
-          if (loadedState.items.isEmpty) {
-            if (widget.pullToRefresh) {
-              return RefreshIndicator(
-                color: widget.refreshIndicatorColor,
+        /// Checking that the data has already been loaded and is not empty
+        bool loaded = (state is PaginationLoaded<T>) && state.items.isNotEmpty;
+
+        bool showHeader = widget.header?.isNotEmpty == true &&
+            (widget.headerAlwaysVisible || loaded);
+        bool showFooter = widget.footer?.isNotEmpty == true &&
+            (widget.footerAlwaysVisible || loaded);
+
+        /// For Cupertino styled pull to refresh need to show header
+        bool cupertinoRefresh =
+            widget.pullToRefresh && widget.pullToRefreshCupertino;
+        return _buildCustomWidget(
+          [
+            if (cupertinoRefresh)
+              CupertinoSliverRefreshControl(
                 onRefresh: refresh,
-                child: _buildSingleWidgetView(widget.onEmpty),
-              );
-            } else {
-              return widget.onEmpty;
-            }
-          }
-          if (widget.pullToRefresh) {
-            return RefreshIndicator(
-              color: widget.refreshIndicatorColor,
-              onRefresh: refresh,
-              child: _buildCustomScrollView(loadedState),
-            );
-          }
-          return _buildCustomScrollView(loadedState);
-        }
+              ),
+            if (showHeader) ...widget.header!,
+            SliverPadding(
+              padding: widget.padding,
+              sliver: _buildSliverBody(state),
+            ),
+            if (showFooter) ...widget.footer!,
+          ],
+        );
       },
     );
   }
 
-  _buildSingleWidgetView(Widget widget) {
-    return Stack(
-      children: <Widget>[
-        ListView(),
-        widget,
-      ],
-    );
-  }
-
-  _buildCustomScrollView(PaginationLoaded<T> loadedState) {
-    return CustomScrollView(
+  Widget _buildCustomWidget(List<Widget> slivers) {
+    var result = CustomScrollView(
       reverse: widget.reverse,
       controller: _scrollController,
       shrinkWrap: widget.shrinkWrap,
       scrollDirection: widget.scrollDirection,
       physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
-      slivers: [
-        if (widget.header != null) widget.header!,
-        SliverPadding(
-          padding: widget.padding,
-          sliver: widget.paginationViewType == PaginationViewType.gridView
-              ? _buildSliverGrid(loadedState)
-              : _buildSliverList(loadedState),
-        ),
-        if (widget.footer != null) widget.footer!,
-      ],
+      slivers: slivers,
+    );
+    if (widget.pullToRefresh && widget.pullToRefreshCupertino == false) {
+      return RefreshIndicator(
+        color: widget.refreshIndicatorColor,
+        onRefresh: refresh,
+        child: result,
+      );
+    }
+    return result;
+  }
+
+  /// Get only body widget, without header and footer
+  Widget _buildSliverBody(PaginationState<T> state) {
+    if (state is PaginationInitial<T>) {
+      return _buildSliverSingleView(
+        widget.initialLoader,
+      );
+    }
+    if (state is PaginationError<T>) {
+      return _buildSliverSingleView(
+        widget.onError(state.error),
+      );
+    }
+    final loadedState = state as PaginationLoaded<T>;
+    if (loadedState.items.isEmpty) {
+      return _buildSliverSingleView(widget.onEmpty);
+    }
+    return _buildSliverScrollView(loadedState);
+  }
+
+  Widget _buildSliverSingleView(Widget child) {
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: child,
     );
   }
 
-  _buildSliverGrid(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverScrollView(PaginationLoaded<T> loadedState) {
+    if (widget.paginationViewType == PaginationViewType.gridView) {
+      return _buildSliverGrid(loadedState);
+    }
+    return _buildSliverList(loadedState);
+  }
+
+  Widget _buildSliverGrid(PaginationLoaded<T> loadedState) {
     return SliverGrid(
       gridDelegate: widget.gridDelegate,
       delegate: SliverChildBuilderDelegate(
@@ -180,7 +211,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSliverList(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverList(PaginationLoaded<T> loadedState) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
