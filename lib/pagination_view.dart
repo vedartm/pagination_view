@@ -149,7 +149,6 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       scrollDirection: widget.scrollDirection,
       physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
       slivers: slivers,
-      anchor: 0.5,
     );
     if (widget.pullToRefresh && widget.pullToRefreshCupertino == false) {
       return RefreshIndicator(
@@ -181,10 +180,9 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   }
 
   Widget _buildSliverSingleView(Widget child) {
-    return SliverList(
-      delegate: SliverChildListDelegate(
-        [child],
-      ),
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: child,
     );
   }
 
