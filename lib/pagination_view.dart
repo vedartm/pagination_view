@@ -149,6 +149,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       scrollDirection: widget.scrollDirection,
       physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
       slivers: slivers,
+      anchor: 0.5,
     );
     if (widget.pullToRefresh && widget.pullToRefreshCupertino == false) {
       return RefreshIndicator(
