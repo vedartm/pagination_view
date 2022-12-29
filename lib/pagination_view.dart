@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +13,28 @@ typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
 enum PaginationViewType { listView, gridView }
 
 class PaginationView<T> extends StatefulWidget {
+
+  final Widget bottomLoader;
+  final Widget? footer;
+  final SliverGridDelegate gridDelegate;
+  final Widget? header;
+  final Widget initialLoader;
+  final Widget onEmpty;
+  final Widget Function(BuildContext, T, int) itemBuilder;
+  final Widget Function(BuildContext, int)? separatorBuilder;
+  final Widget Function(Exception) onError;
+  final EdgeInsets padding;
+  final PaginationBuilder<T> pageFetch;
+  final PaginationViewType paginationViewType;
+  final ScrollPhysics? physics;
+  final List<T> preloadedItems;
+  final bool pullToRefresh;
+  final Color refreshIndicatorColor;
+  final bool reverse;
+  final ScrollController? scrollController;
+  final Axis scrollDirection;
+  final bool shrinkWrap;
+
   PaginationView({
     Key? key,
     required this.itemBuilder,
@@ -143,6 +164,17 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
 
   Widget _buildCustomWidget(List<Widget> slivers) {
     var result = CustomScrollView(
+  Widget _buildSingleWidgetView(Widget widget) {
+    return Stack(
+      children: <Widget>[
+        ListView(),
+        widget,
+      ],
+    );
+  }
+
+  Widget _buildCustomScrollView(PaginationLoaded<T> loadedState) {
+    return CustomScrollView(
       reverse: widget.reverse,
       controller: _scrollController,
       shrinkWrap: widget.shrinkWrap,

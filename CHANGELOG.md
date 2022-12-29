@@ -1,3 +1,10 @@
+## 3.0.0
+
+- **BREAKING**: Change signature of `onError` from `Widget Function(dynamic)` to `Widget Function(Exception)`
+- **BREAKING**: Change minimum required SDK version from `2.12` to `2.17`
+- make constructor of `PaginationView` a constant constructor
+- Updated pub packages and the example app
+
 ## 2.0.0
 
 - **BREAKING**: `header` and `footer` accepts only sliver widget. If you want to add a normal widget wrap it with `SliverToBoxAdapter(child: YourWidget())`. Check example for more clarity.
