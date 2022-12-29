@@ -17,17 +17,17 @@ class MyApp extends StatelessWidget {
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  int page;
-  PaginationViewType paginationViewType;
-  Axis scrollDirection;
-  GlobalKey<PaginationViewState> key;
+  late int page;
+  late PaginationViewType paginationViewType;
+  late Axis scrollDirection;
+  late GlobalKey<PaginationViewState> key;
 
   @override
   void initState() {
@@ -67,18 +67,14 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             icon: Icon(Icons.refresh),
-            onPressed: () => key.currentState.refresh(),
+            onPressed: () => key.currentState?.refresh(),
           ),
         ],
       ),
       body: PaginationView<User>(
         key: key,
-        header: SliverToBoxAdapter(child: Text('Header text')),
-        footer: SliverToBoxAdapter(child: Text('Footer text')),
-        preloadedItems: <User>[
-          User('Preloaded person #1', faker.internet.email()),
-          User('Preloaded person #2', faker.internet.email()),
-        ],
+        header: [SliverToBoxAdapter(child: Text('Header text'))],
+        footer: [SliverToBoxAdapter(child: Text('Footer text'))],
         paginationViewType: paginationViewType,
         itemBuilder: (BuildContext context, User user, int index) =>
             (paginationViewType == PaginationViewType.listView)
@@ -108,6 +104,7 @@ class _HomePageState extends State<HomePage> {
         pageFetch: pageFetch,
         scrollDirection: scrollDirection,
         pullToRefresh: true,
+        pullToRefreshCupertino: true,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           childAspectRatio: 10 / 16,
           maxCrossAxisExtent: 320,
@@ -116,32 +113,29 @@ class _HomePageState extends State<HomePage> {
         onError: (Exception error) => Center(
           child: Text('Some error occurred'),
         ),
-        onEmpty: Center(
-          child: Text('Sorry! This is empty'),
-        ),
-        bottomLoader: Center(
-          child: CircularProgressIndicator(),
-        ),
-        initialLoader: Center(
-          child: CircularProgressIndicator(),
-        ),
+        onEmpty: Center(child: Text('Sorry! This is empty')),
+        bottomLoader: Center(child: CircularProgressIndicator()),
+        initialLoader: Center(child: CircularProgressIndicator()),
       ),
     );
   }
 
   Future<List<User>> pageFetch(int offset) async {
+    int itemCount = 10;
     print('pageFetch: $offset');
-    page = (offset / 20).round();
+    page = (offset / itemCount).round();
     final Faker faker = Faker();
     final List<User> nextUsersList = List.generate(
-      20,
+      itemCount,
       (int index) => User(
         faker.person.name() + ' - $page$index',
         faker.internet.email(),
       ),
     );
-    await Future<List<User>>.delayed(Duration(seconds: 1));
-    return page == 5 ? [] : nextUsersList;
+    return Future.delayed(
+      Duration(seconds: 1),
+      () => page == itemCount ? [] : nextUsersList,
+    );
   }
 }
 

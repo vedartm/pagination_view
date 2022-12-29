@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,57 +14,6 @@ typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
 enum PaginationViewType { listView, gridView }
 
 class PaginationView<T> extends StatefulWidget {
-
-  final Widget bottomLoader;
-  final Widget? footer;
-  final SliverGridDelegate gridDelegate;
-  final Widget? header;
-  final Widget initialLoader;
-  final Widget onEmpty;
-  final Widget Function(BuildContext, T, int) itemBuilder;
-  final Widget Function(BuildContext, int)? separatorBuilder;
-  final Widget Function(Exception) onError;
-  final EdgeInsets padding;
-  final PaginationBuilder<T> pageFetch;
-  final PaginationViewType paginationViewType;
-  final ScrollPhysics? physics;
-  final List<T> preloadedItems;
-  final bool pullToRefresh;
-  final Color refreshIndicatorColor;
-  final bool reverse;
-  final ScrollController? scrollController;
-  final Axis scrollDirection;
-  final bool shrinkWrap;
-
-  PaginationView({
-    Key? key,
-    required this.itemBuilder,
-    required this.pageFetch,
-    required this.onEmpty,
-    required this.onError,
-    this.pullToRefresh = false,
-    this.pullToRefreshCupertino = false,
-    this.refreshIndicatorColor = Colors.blue,
-    this.gridDelegate =
-        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-    List<T>? preloadedItems,
-    this.initialLoader = const InitialLoader(),
-    this.bottomLoader = const BottomLoader(),
-    this.paginationViewType = PaginationViewType.listView,
-    this.shrinkWrap = false,
-    this.reverse = false,
-    this.scrollDirection = Axis.vertical,
-    this.padding = const EdgeInsets.all(0),
-    this.physics,
-    this.separatorBuilder,
-    this.scrollController,
-    this.headerAlwaysVisible = false,
-    this.header,
-    this.footerAlwaysVisible = false,
-    this.footer,
-  })  : preloadedItems = preloadedItems ?? <T>[],
-        super(key: key);
-
   final Widget bottomLoader;
 
   /// Default false
@@ -95,14 +45,41 @@ class PaginationView<T> extends StatefulWidget {
   final Axis scrollDirection;
   final bool shrinkWrap;
 
+  final Widget Function(BuildContext, T, int) itemBuilder;
+  final Widget Function(BuildContext, int)? separatorBuilder;
+  final Widget Function(Exception) onError;
+
+  PaginationView({
+    Key? key,
+    required this.itemBuilder,
+    required this.pageFetch,
+    required this.onEmpty,
+    required this.onError,
+    this.pullToRefresh = false,
+    this.pullToRefreshCupertino = false,
+    this.refreshIndicatorColor = Colors.blue,
+    this.gridDelegate =
+        const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+    List<T>? preloadedItems,
+    this.initialLoader = const InitialLoader(),
+    this.bottomLoader = const BottomLoader(),
+    this.paginationViewType = PaginationViewType.listView,
+    this.shrinkWrap = false,
+    this.reverse = false,
+    this.scrollDirection = Axis.vertical,
+    this.padding = const EdgeInsets.all(0),
+    this.physics,
+    this.separatorBuilder,
+    this.scrollController,
+    this.headerAlwaysVisible = false,
+    this.header,
+    this.footerAlwaysVisible = false,
+    this.footer,
+  })  : preloadedItems = preloadedItems ?? <T>[],
+        super(key: key);
+
   @override
   PaginationViewState<T> createState() => PaginationViewState<T>();
-
-  final Widget Function(BuildContext, T, int) itemBuilder;
-
-  final Widget Function(BuildContext, int)? separatorBuilder;
-
-  final Widget Function(dynamic) onError;
 }
 
 class PaginationViewState<T> extends State<PaginationView<T>> {
@@ -142,14 +119,15 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
             (widget.footerAlwaysVisible || loaded);
 
         /// For Cupertino styled pull to refresh need to show header
-        bool cupertinoRefresh =
-            widget.pullToRefresh && widget.pullToRefreshCupertino;
+        /// Cupertino will only work with vertical scroll direction
+        bool cupertinoRefresh = widget.pullToRefresh &&
+            widget.pullToRefreshCupertino &&
+            widget.scrollDirection != Axis.horizontal;
+
         return _buildCustomWidget(
           [
             if (cupertinoRefresh)
-              CupertinoSliverRefreshControl(
-                onRefresh: refresh,
-              ),
+              CupertinoSliverRefreshControl(onRefresh: refresh),
             if (showHeader) ...widget.header!,
             SliverPadding(
               padding: widget.padding,
@@ -164,17 +142,6 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
 
   Widget _buildCustomWidget(List<Widget> slivers) {
     var result = CustomScrollView(
-  Widget _buildSingleWidgetView(Widget widget) {
-    return Stack(
-      children: <Widget>[
-        ListView(),
-        widget,
-      ],
-    );
-  }
-
-  Widget _buildCustomScrollView(PaginationLoaded<T> loadedState) {
-    return CustomScrollView(
       reverse: widget.reverse,
       controller: _scrollController,
       shrinkWrap: widget.shrinkWrap,
