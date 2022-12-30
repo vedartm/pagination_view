@@ -28,6 +28,8 @@ class _HomePageState extends State<HomePage> {
   late PaginationViewType paginationViewType;
   late Axis scrollDirection;
   late GlobalKey<PaginationViewState> key;
+  // To show loading animation / widget anywhere else
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -76,6 +78,10 @@ class _HomePageState extends State<HomePage> {
         header: [SliverToBoxAdapter(child: Text('Header text'))],
         footer: [SliverToBoxAdapter(child: Text('Footer text'))],
         paginationViewType: paginationViewType,
+        onLoading: (value) {
+          isLoading = value;
+          print("Fetching Data : $isLoading");
+        },
         itemBuilder: (BuildContext context, User user, int index) =>
             (paginationViewType == PaginationViewType.listView)
                 ? Container(
@@ -122,8 +128,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<User>> pageFetch(int offset) async {
     int itemCount = 10;
-    print('pageFetch: $offset');
     page = (offset / itemCount).round();
+    print('offset: $offset , itemCount : $itemCount , page : $page');
     final Faker faker = Faker();
     final List<User> nextUsersList = List.generate(
       itemCount,
@@ -132,10 +138,7 @@ class _HomePageState extends State<HomePage> {
         faker.internet.email(),
       ),
     );
-    return Future.delayed(
-      Duration(seconds: 1),
-      () => page == itemCount ? [] : nextUsersList,
-    );
+    return Future.delayed(Duration(seconds: 1), () => nextUsersList);
   }
 }
 
@@ -146,10 +149,7 @@ class PaginationTestOnDifferentSize extends StatelessWidget {
       body: Column(
         children: [
           Expanded(flex: 5, child: Container()),
-          Expanded(
-            flex: 3,
-            child: HomePage(),
-          )
+          Expanded(flex: 3, child: HomePage())
         ],
       ),
     );

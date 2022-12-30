@@ -10,6 +10,7 @@ import 'widgets/empty_separator.dart';
 import 'widgets/initial_loader.dart';
 
 typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
+typedef Loading = void Function(bool value);
 
 enum PaginationViewType { listView, gridView }
 
@@ -45,6 +46,9 @@ class PaginationView<T> extends StatefulWidget {
   final Axis scrollDirection;
   final bool shrinkWrap;
 
+  /// To show loading animation / widget anywhere else
+  final Loading? onLoading;
+
   final Widget Function(BuildContext, T, int) itemBuilder;
   final Widget Function(BuildContext, int)? separatorBuilder;
   final Widget Function(Exception) onError;
@@ -75,6 +79,7 @@ class PaginationView<T> extends StatefulWidget {
     this.header,
     this.footerAlwaysVisible = false,
     this.footer,
+    this.onLoading,
   })  : preloadedItems = preloadedItems ?? <T>[],
         super(key: key);
 
@@ -90,7 +95,8 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   void initState() {
     super.initState();
     _scrollController = widget.scrollController ?? ScrollController();
-    _cubit = PaginationCubit<T>(widget.preloadedItems, widget.pageFetch)
+    _cubit = PaginationCubit<T>(
+        widget.preloadedItems, widget.pageFetch, widget.onLoading)
       ..fetchPaginatedList();
   }
 
@@ -162,14 +168,10 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   /// Get only body widget, without header and footer
   Widget _buildSliverBody(PaginationState<T> state) {
     if (state is PaginationInitial<T>) {
-      return _buildSliverSingleView(
-        widget.initialLoader,
-      );
+      return _buildSliverSingleView(widget.initialLoader);
     }
     if (state is PaginationError<T>) {
-      return _buildSliverSingleView(
-        widget.onError(state.error),
-      );
+      return _buildSliverSingleView(widget.onError(state.error));
     }
     final loadedState = state as PaginationLoaded<T>;
     if (loadedState.items.isEmpty) {
@@ -221,7 +223,10 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
               return widget.bottomLoader;
             }
             return widget.itemBuilder(
-                context, loadedState.items[itemIndex], itemIndex);
+              context,
+              loadedState.items[itemIndex],
+              itemIndex,
+            );
           }
           return widget.separatorBuilder != null
               ? widget.separatorBuilder!(context, itemIndex)
@@ -235,12 +240,13 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           return null;
         },
         childCount: max(
-            0,
-            (loadedState.hasReachedEnd
-                        ? loadedState.items.length
-                        : loadedState.items.length + 1) *
-                    2 -
-                1),
+          0,
+          (loadedState.hasReachedEnd
+                      ? loadedState.items.length
+                      : loadedState.items.length + 1) *
+                  2 -
+              1,
+        ),
       ),
     );
   }
