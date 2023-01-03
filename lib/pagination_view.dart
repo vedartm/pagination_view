@@ -29,13 +29,6 @@ class PaginationView<T> extends StatefulWidget {
   final ScrollPhysics? physics;
   final List<T> preloadedItems;
   final bool pullToRefresh;
-
-  /// Pull to refresh stylized as Cupertino
-  ///
-  /// Only if pullToRefresh == true
-  ///
-  /// Default false
-  final bool pullToRefreshCupertino;
   final Color refreshIndicatorColor;
   final bool reverse;
   final ScrollController? scrollController;
@@ -53,7 +46,6 @@ class PaginationView<T> extends StatefulWidget {
     required this.onEmpty,
     required this.onError,
     this.pullToRefresh = false,
-    this.pullToRefreshCupertino = false,
     this.refreshIndicatorColor = Colors.blue,
     this.gridDelegate =
         const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
@@ -109,7 +101,9 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           return widget.initialLoader;
         } else if (state is PaginationError<T>) {
           if (widget.pullToRefresh) {
-            return _buildRefreshIndicatorWidget(
+            return RefreshIndicator(
+              color: widget.refreshIndicatorColor,
+              onRefresh: refresh,
               child: _buildSingleWidgetView(widget.onError(state.error)),
             );
           } else {
@@ -119,7 +113,9 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
           final loadedState = state as PaginationLoaded<T>;
           if (loadedState.items.isEmpty) {
             if (widget.pullToRefresh) {
-              return _buildRefreshIndicatorWidget(
+              return RefreshIndicator(
+                color: widget.refreshIndicatorColor,
+                onRefresh: refresh,
                 child: _buildSingleWidgetView(widget.onEmpty),
               );
             } else {
@@ -127,7 +123,9 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
             }
           }
           if (widget.pullToRefresh) {
-            return _buildRefreshIndicatorWidget(
+            return RefreshIndicator(
+              color: widget.refreshIndicatorColor,
+              onRefresh: refresh,
               child: _buildCustomScrollView(loadedState),
             );
           }
@@ -135,19 +133,6 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
         }
       },
     );
-  }
-
-  Widget _buildRefreshIndicatorWidget({required Widget child}) {
-    /// For Cupertino styled pull to refresh need to show header
-    /// Cupertino will only work with vertical scroll direction
-    if (widget.pullToRefresh && widget.pullToRefreshCupertino == false) {
-      return RefreshIndicator(
-        color: widget.refreshIndicatorColor,
-        onRefresh: refresh,
-        child: child,
-      );
-    }
-    return child;
   }
 
   Widget _buildSingleWidgetView(Widget widget) {
@@ -160,10 +145,6 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
   }
 
   Widget _buildCustomScrollView(PaginationLoaded<T> loadedState) {
-    bool cupertinoRefresh = widget.pullToRefresh &&
-        widget.pullToRefreshCupertino &&
-        widget.scrollDirection != Axis.horizontal;
-
     return CustomScrollView(
       reverse: widget.reverse,
       controller: _scrollController,
@@ -171,7 +152,6 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
       scrollDirection: widget.scrollDirection,
       physics: AlwaysScrollableScrollPhysics(parent: widget.physics),
       slivers: [
-        if (cupertinoRefresh) CupertinoSliverRefreshControl(onRefresh: refresh),
         if (widget.header != null) widget.header!,
         SliverPadding(
           padding: widget.padding,

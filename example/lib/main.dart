@@ -106,7 +106,6 @@ class _HomePageState extends State<HomePage> {
         pageFetch: pageFetch,
         scrollDirection: scrollDirection,
         pullToRefresh: true,
-        pullToRefreshCupertino: true,
         gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
           childAspectRatio: 10 / 16,
           maxCrossAxisExtent: 320,
