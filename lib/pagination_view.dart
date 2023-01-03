@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,10 +10,35 @@ import 'widgets/empty_separator.dart';
 import 'widgets/initial_loader.dart';
 
 typedef PaginationBuilder<T> = Future<List<T>> Function(int currentListSize);
+typedef Loading = void Function(bool value);
 
 enum PaginationViewType { listView, gridView }
 
 class PaginationView<T> extends StatefulWidget {
+  final Widget bottomLoader;
+
+  final Widget? footer;
+  final SliverGridDelegate gridDelegate;
+
+  final Widget? header;
+  final Widget initialLoader;
+  final Widget onEmpty;
+  final EdgeInsets padding;
+  final PaginationBuilder<T> pageFetch;
+  final PaginationViewType paginationViewType;
+  final ScrollPhysics? physics;
+  final List<T> preloadedItems;
+  final bool pullToRefresh;
+  final Color refreshIndicatorColor;
+  final bool reverse;
+  final ScrollController? scrollController;
+  final Axis scrollDirection;
+  final bool shrinkWrap;
+
+  final Widget Function(BuildContext, T, int) itemBuilder;
+  final Widget Function(BuildContext, int)? separatorBuilder;
+  final Widget Function(Exception) onError;
+
   PaginationView({
     Key? key,
     required this.itemBuilder,
@@ -39,32 +65,8 @@ class PaginationView<T> extends StatefulWidget {
   })  : preloadedItems = preloadedItems ?? <T>[],
         super(key: key);
 
-  final Widget bottomLoader;
-  final Widget? footer;
-  final SliverGridDelegate gridDelegate;
-  final Widget? header;
-  final Widget initialLoader;
-  final Widget onEmpty;
-  final EdgeInsets padding;
-  final PaginationBuilder<T> pageFetch;
-  final PaginationViewType paginationViewType;
-  final ScrollPhysics? physics;
-  final List<T> preloadedItems;
-  final bool pullToRefresh;
-  final Color refreshIndicatorColor;
-  final bool reverse;
-  final ScrollController? scrollController;
-  final Axis scrollDirection;
-  final bool shrinkWrap;
-
   @override
   PaginationViewState<T> createState() => PaginationViewState<T>();
-
-  final Widget Function(BuildContext, T, int) itemBuilder;
-
-  final Widget Function(BuildContext, int)? separatorBuilder;
-
-  final Widget Function(dynamic) onError;
 }
 
 class PaginationViewState<T> extends State<PaginationView<T>> {
@@ -133,7 +135,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSingleWidgetView(Widget widget) {
+  Widget _buildSingleWidgetView(Widget widget) {
     return Stack(
       children: <Widget>[
         ListView(),
@@ -142,7 +144,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildCustomScrollView(PaginationLoaded<T> loadedState) {
+  Widget _buildCustomScrollView(PaginationLoaded<T> loadedState) {
     return CustomScrollView(
       reverse: widget.reverse,
       controller: _scrollController,
@@ -162,7 +164,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSliverGrid(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverGrid(PaginationLoaded<T> loadedState) {
     return SliverGrid(
       gridDelegate: widget.gridDelegate,
       delegate: SliverChildBuilderDelegate(
@@ -180,7 +182,7 @@ class PaginationViewState<T> extends State<PaginationView<T>> {
     );
   }
 
-  _buildSliverList(PaginationLoaded<T> loadedState) {
+  Widget _buildSliverList(PaginationLoaded<T> loadedState) {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
