@@ -75,13 +75,9 @@ class _HomePageState extends State<HomePage> {
       ),
       body: PaginationView<User>(
         key: key,
-        header: [SliverToBoxAdapter(child: Text('Header text'))],
-        footer: [SliverToBoxAdapter(child: Text('Footer text'))],
+        header: SliverToBoxAdapter(child: Text('Header text')),
+        footer: SliverToBoxAdapter(child: Text('Footer text')),
         paginationViewType: paginationViewType,
-        onLoading: (value) {
-          isLoading = value;
-          print("Fetching Data : $isLoading");
-        },
         itemBuilder: (BuildContext context, User user, int index) =>
             (paginationViewType == PaginationViewType.listView)
                 ? Container(

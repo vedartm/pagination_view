@@ -6,13 +6,12 @@ import 'package:flutter/foundation.dart';
 part 'pagination_state.dart';
 
 class PaginationCubit<T> extends Cubit<PaginationState<T>> {
-  PaginationCubit(this.preloadedItems, this.callback, this.loadingCallback)
+  PaginationCubit(this.preloadedItems, this.callback)
       : super(PaginationInitial<T>());
 
   final List<T> preloadedItems;
 
   final Future<List<T>> Function(int) callback;
-  final void Function(bool)? loadingCallback;
 
   void fetchPaginatedList() {
     if (state is PaginationInitial) {
@@ -32,7 +31,6 @@ class PaginationCubit<T> extends Cubit<PaginationState<T>> {
     List<T> previousList = const [],
   }) async {
     try {
-      if (loadingCallback != null) loadingCallback!(true);
       final newList = await callback(
         _getAbsoluteOffset(previousList.length),
       );
@@ -40,7 +38,6 @@ class PaginationCubit<T> extends Cubit<PaginationState<T>> {
         items: List<T>.from(previousList)..addAll(newList),
         hasReachedEnd: newList.isEmpty,
       ));
-      if (loadingCallback != null) loadingCallback!(false);
     } on Exception catch (error) {
       emit(PaginationError(error: error));
     }
